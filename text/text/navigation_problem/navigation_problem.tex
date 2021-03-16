@@ -80,17 +80,81 @@ Wir besitzen nun die Möglichkeit, eine zufällige Landschaft zu generieren und 
 \end{figure}
 
 %% Das Environment
-\section{TODO Q-Table}
+\section{Q-Learning}
 
-Um nun die erzeugte Landschaft zu testen, werden wir zunächst einen simplen Reinforcement Learning Agenten implementieren, welcher auf auf dem Terrain operiert. 
+Um nun zu testen, ob die Landschaft für unsere Zwecke geeignet ist, werden wir einige Experimente durchführen. Wir wollen hierfür zunächst einen simplen Reinforcement Learning Agenten implementieren, welcher \textit{Q-Learning} verwendet.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{plot_test.pdf}
-    \caption{Visualisierung von zweidimensionaler Perlin Noise} \label{img:terrainMain}
-\end{figure}
+\subsection{WORKING TITLE: Theory}
+% \citeauthor{}
 
-\the\textwidth
+Dieses Kapitel stützt sich zu einem Großteil auf das Buch \textit{Reinforcement Learning: An Introduction, Second Edition} von Sutton u.a. \cite{06_sutton2018reinforcement}. Falls nicht anders angegeben, wurden die Informationen hieraus entnommen.
+
+\paragraph{Policies}
+Der Agent folgt zu jedem Zeitpunkt einer Policy $ \pi $. Hierbei gibt $ \pi(a|s) $ die Wahrscheinlichkeit dafür an, dass der Agent zum Zeitschritt $ t $ die Aktion $ a \in A $ im Zustand $ s \in S $ ausführt, also dass $ A_t = a $ wenn $ S_t = s $. Hierbei ist $ S $ die Menge aller Zustände und $ A $ die Menge aller Aktionen. $ \pi(a|s) $ ist also eine Wahrscheinlichkeitsverteilung über $ a \in A(s) $ für jedes $ s \in S $.
+
+\paragraph{State-Value Functions}
+Wir benötigen nun eine Möglichkeit einzuschätzen, wie gut ein Zustand $ s $ ist, wenn wir der Policy $ \pi $ folgen. Hierfür nutzen wir die \textit{state-value function} $ v_\pi $. Diese beschreibt die erwartete Belohnung eines Zustands $ s $ unter der Policy $ \pi $ zum Zeitschritt $ t $. Wir definieren $ v_\pi(s) $ als
+\begin{align}
+    \begin{split}
+    v_\pi(s) & \doteq E_\pi \left[G_t | S_t = s \right]\\
+    & = E_\pi \left[\sum_{k = 0}^{\infty} \gamma^k R_{t + k + 1} | S_t = s \right],
+    \end{split}
+\end{align}
+wobei $ E_\pi $ der Erwartungswert einer Zufallsvariable ist, gegeben der Agent folgt der Policy $ \pi $.
+
+\paragraph{Action-Value Functions}
+Ähnlich hierzu gibt die \textit{action-value function} $ q_\pi $ für die Policy $ \pi $ an, wie profitabel es für den Agenten ist, in einem gegebenen Zustand eine gewisse Aktion auszuführen.
+
+Der Wert einer Aktion $ a $ im Zustand $ s $ unter der Policy $ \pi $ ist also die erwartete Belohnung, wenn man im Zustand $ s $ zum Zeitschritt $ t $ die Aktion $ a $ ausführt. Wir definieren $ q_\pi(s, a) $ als
+\begin{align}
+    \begin{split}
+    q_\pi(s,a) & \doteq E_\pi \left[G_t | S_t = s, A_t = a \right]\\
+    & = E_\pi \left[\sum_{k = 0}^{\infty} \gamma^k R_{t + k + 1} | S_t = s, A_t = a \right].
+    \end{split}
+\end{align}
+Die action-value function wird auch als Q-function bezeichnet, welche als Ergebnis für ein state-action Paar die Q-value liefert. Für die folgenden Implementierungen ist diese von großer Wichtigkeit.
+
+\paragraph{Optimale Policies und Optimale Value Functions}
+Das Ziel des Agenten ist, die optimale Policy $ \pi $ für ein Markov Decision Problem zu finden. Ist dieses Ziel erreicht so lässt sich sagen, dass die Reinforcement Learning Aufgabe erfüllt ist. Optimal ist hierbei die Policy, welche nach Aufsummieren der Belohnungen über alle Schritte einer Episode die beste gesamte Belohnung liefert. Eine Policy $ \pi $ ist also besser als Policy $ \pi' $, wenn die erwartete Belohnung von $ \pi $ für \textbf{alle} Zustände $ s \in S $ größer ist als die von $ \pi' $. \cite{06_sutton2018reinforcement} verwendet die Formulierung
+\begin{align}
+    \pi \geq \pi' \text{ if and only if } v_\pi(s) \geq v_{\pi'}(s) \text{ for all } s \in S.
+\end{align}
+
+Es gibt immer eine Policy, die besser als oder gleichwertig mit allen anderen Policies ist. Diese wird beziehungsweise werden als $ \pi_* $ bezeichnet. Die besten Policies besitzen die gleich state-value function, welche die \textit{optimale state-value function} $ v_* $ genannt wird und definiert wird als
+\begin{align}
+    v_*(s) \doteq \max_\pi v_\pi(s)
+\end{align}
+für alle $ s \in S $.
+
+Optimale Policies teilen sich ebenfalls die gleiche \textit{optimale action-value function} $ q_* $, welche definiert ist als
+\begin{align}
+    q_*(s, a) \doteq \max_\pi q_\pi(s, a)
+\end{align}
+für alle $ s \in S $ und $ a \in A $. $ q_* $ liefert also für jedes state-action Paar den größtmöglichen erwarteten Ertrag, den irgendeine Policy erreichen kann.
+
+\paragraph{Bellman Optimality Equasion}
+Die optimale action-value function $ q_* $ muss die folgende Gleichung erfüllen:
+\begin{align}
+    q_*(s, a) = E \left[R_{t + 1} + \gamma \max_{a'} q_*(s', a') \right]
+\end{align}
+Diese Gleichung wird \textit{Bellman optimality equation} für $ q_* $ genannt und besagt, dass der beste erwartete Ertrag für jedes state-action Paar $ (s, a) $ zum Zeitpunkt $ t $ der Summe aus der direkten Belohnung $ R_{t + 1} $ der Aktion $ a $ und dem \textbf{maximalen} erwarteten Ertrag, der von einem der nächsten state-action Paare $ (s', a') $ erreicht werden kann, mit discount $ \gamma $ entsprechen muss.
+
+Wir werden die Bellman equasion verwenden, um $ q_* $ zu finden. $ q_* $ wiederum liefert uns die optimale Policy.
+
+\subsection{Implementierung in Python}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\textwidth]{plot_test.pdf}
+%     \caption{Visualisierung von zweidimensionaler Perlin Noise} \label{img:terrainMain}
+% \end{figure}
+
+% \begin{align}
+%     \mathcal{F}(\theta) & = H(A|S,Z) - H(Z|S) + H(Z) \nonumber\\
+%     & = H(A|S,Z) + E_{z \sim p(z), s \sim \pi(z)}(log\ p(z | s)) - E_{z \sim p(z)}(log\ p(z)) \label{eq:objective_2}\\
+%     & \ge H(A|S,Z) + E_{z \sim p(z), s \sim \pi(z)}(log\ q_\phi(z | s) - log\ p(z)) \stackrel{\triangle}{=} \mathcal{G}(\theta, \phi) \nonumber
+% \end{align}
+
 
 % Grid, auf dem sich der Agent bewegen
 % Perlin Noise
