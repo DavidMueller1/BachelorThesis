@@ -19,7 +19,7 @@
 %                               `introduction-UTF8.tex' or `introduction-ISO8859-1.tex'
 % -------------------------------------------------------------------------------------------------
 %
-\documentclass[enabledeprecatedfontcommands,bibliography=totoc,listof=totoc,index=totoc,twoside=true,BCOR=12mm,DIV=12]{scrbook}
+\documentclass[enabledeprecatedfontcommands,bibliography=totoc,listof=totoc,index=totoc,twoside=true,BCOR=12mm,DIV=12]{scrbook} % TODO evtl ändern
 %\KOMAoptions{draft=true}                         % uncomment if you want to visualise overful hbox
 %\KOMAoptions{chapterprefix=true}                 % uncomment if you like "Chapter" in front of
                                                   % chapter number
@@ -98,6 +98,8 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{mdwlist}
+\usepackage{xurl}
 
 \setcounter{tocdepth}{3}                          % sectioning depth in toc
 \setcounter{secnumdepth}{3}                       % sectioning depth in text
@@ -132,7 +134,7 @@
     % \input{text/introduction-UTF8}
     % \input{text/introduction-ISO8859-1}
     \input{text/einleitung}
-    \input{text/navigation_problem/navigation_problem}
+    \input{text/navigation_problem/00_navigation_problem}
     \input{text/luna_lander/luna_lander}
     % further chapters 
 %
