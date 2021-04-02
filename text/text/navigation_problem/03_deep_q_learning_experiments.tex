@@ -139,11 +139,9 @@ class DeepQNetwork(BasicNetwork):
         self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
         self.out = nn.Linear(self.fc2_dims, self.n_actions)
-
         self.optimizer = optim.Adam(self.parameters(),
                                     lr=learning_rate)
         self.loss = nn.MSELoss()
-
         self.device =\
             T.device('cuda' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
@@ -154,8 +152,9 @@ class DeepQNetwork(BasicNetwork):
         actions = self.out(x)
         return actions
 \end{minted}
-Wir verwenden in unserem DQN zwei sogenannte Fully-connected hidden Layers. Das bedeutet, dass alle Neuronen einer Schicht mit allen Neuronen der nächsten Schicht verknüpft sind. Die erste Ebene nimmt Eingaben mit den Dimensionen \mintinline{python}{input_dims} entgegen. Wir legen die Dimensionen der beiden hidden Layers für die folgenden Experimente auf \mintinline{python}{fc1_dims = 256} und \mintinline{python}{fc2_dims = 256} fest. Die Anzahl an Outputs der Ausgabeebene entspricht der Anzahl der Aktionen, die dem Agenten zur Verfügung stehen. Im Moment sind das \mintinline{python}{n_actions = 4}, also die vier möglichen Bewegungsrichtungen oben, rechts, unten und links.
-% sigmoid als Activation function
+Wir verwenden in unserem DQN zwei sogenannte Fully-connected hidden Layers. Das bedeutet, dass alle Neuronen einer Schicht mit allen Neuronen der nächsten Schicht verknüpft sind. PyTorch nutzt hierfür die Bezeichnung \mintinline{python}{Linear} layer. Die erste Ebene nimmt Eingaben mit den Dimensionen \mintinline{python}{input_dims} entgegen. Wir legen die Dimensionen der beiden hidden Layers für die folgenden Experimente auf \mintinline{python}{fc1_dims = 256} und \mintinline{python}{fc2_dims = 256} fest. Die Anzahl an Outputs der Ausgabeebene entspricht der Anzahl der Aktionen, die dem Agenten zur Verfügung stehen. In unserem Fall sind das \mintinline{python}{n_actions = 4}, also die vier möglichen Bewegungsrichtungen oben, rechts, unten und links.
+
+Die ReLU activation function wird im Moment als die mit der besten Performance angesehen \cite{10_stevens2020deep}. Trotzdem benutzen wir für unsere activation function Sigmoid, das diese in unserem Anwendungsfall bessere Ergebnisse zu erziehlen scheint (TODO belegen). 
 
 Die Hyperparameter werden in der Datenklasse \mintinline{python}{DeepQParameters} verwaltet. Diese enthält die gleichen Parameter wie \mintinline{python}{Parameters} aus Kapitel \ref{sec:qLearningHyperparameter}, wird aber noch um folgende ergänzt:
 \begin{minted}{python}
@@ -172,7 +171,100 @@ Deren Funktion wurde im Kapitel \ref{sec:deepQPrinciple} bereits erläutert.
 Wir wollen diese Implementierung nun für einige Experimente nutzen. Ziel ist es zunächst, eine geeignete Aufgabe für den Agenten zu finden, welche anschließend für den Vergleich unterschiedlicher Lernstrategien dienen soll.
 
 \paragraph{TODO}
-Das DQN erhält als Eingabe 
+Das DQN erhält als Eingabe die aktuelle Position des Agenten in Form einer x- und einer y-Koordinate. Diese beschreiben in diesem Experiment den Zustand des Agenten. Die Mitte der Landschaft hat die Koordinaten (0, 0). Dies ist ebenfalls der Startpunkt des Agenten. Als Belohnung erhält der Agent wie in Kapitel \ref{sec:qLearningExperiments} die Differenz der Höhe des Folgezustands und des aktuellen Zustands. Die Hyperparameter werden wie folgt belegt:
+\begin{minted}{python}
+params = DeepQParameters(
+            num_episodes=10000,
+            max_steps_per_episode=100,
+            replay_buffer_size=20000,
+            batch_size=32,
+            learning_rate=0.001,
+            discount_rate=0.999,
+            target_update=25,
+            start_exploration_rate=1,
+            max_exploration_rate=1,
+            min_exploration_rate=0.001,
+            exploration_decay_rate=0.001,
+            # ... rest wird erst während des Trainings belegt
+        )
+\end{minted}
+Damit einzelne Beobachtungen nicht zu einer völligen Veränderung der Gewichte im DQN führen, ist die \mintinline{python}{learning_rate} im Vergleich zum Training mit der Q-table sehr klein.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_simple.pdf}
+        \caption{TODO}
+        \label{img:graphDeepQSimple}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/terrain_path_simple.JPG}
+        \caption{TODO}
+        \label{img:pathDeepQSimple}
+    \end{subfigure}
+    \caption{Ergebnisse des ersten Experiments}
+\end{figure}
+Der Agent scheint mit diesen Informationen noch nicht viel anfangen zu können. Der Graph \ref{img:graphDeepQSimple} zeigt, dass der moving average Wert (orange Linie) über die komplette Trainingszeit sehr Inkonsistent ist. Außerdem liegt er größtenteils deutlich unter dem möglichen Höchstwert. Dies lässt sich daran erkennen, dass die blaue Linie -- also die Belohnung der einzelnen Episoden -- teilweise fast bis 400 geht, der moving average diesen aber nur wenige Male fast erreicht. In Abbildung \ref{img:pathDeepQSimple} ist zu erkennen, welchen Pfad der Agent unter Verwendung des aus dem Training resultierenden Netzes zurücklegt. Er geht auf einen Gipfel, welcher sich Nahe am Startzustand befindet. Optimal wäre jedoch der Gipfel ganz oben in der Mitte.
+
+Das DQN liefert hier also kein sonderlich gutes Ergebnis. Dies könnte daran liegen, dass der Agent keinerlei Information über die Höhe seiner Zustände hat, von denen seine erhaltene Belohnung und die Erfüllung der Aufgabe ja stark abhängt.
+
+\paragraph{TODO}
+ Wir passen also die Werte an, die einen Zustand beschreiben und fügen die Höhe des aktuellen Zustands, sowie die der umliegenden Zustände hinzu. Das DQN erhält also nun als Eingabe sieben Werte (x- und y-Koordinate, eigene Höhe und die Höhe der vier umliegenden Felder).
+
+Das letzte Training hat für die 10000 Episoden auf einer Nvidia RTX 2060 (TODO evtl. unnötig zu erwähnen?) etwas über eineinhalb Stunden gedauert. Wir suchen eine Aufgabe, die für den Vergleich unterschiedlicher Lernstrategien genutzt werden soll und wollen für jede Strategie eine Experimentreihe durchlaufen, um eine statistische Auswertung zu ermöglichen. Diese sollten in zumutbarer Zeit durchführbar sein. Daher ist es wichtig, die Trainingszeit für einzelne Experimente zu reduzieren. 
+
+Wir reduzieren daher die Episodenanzahl \mintinline{python}{num_episodes} auf 1500. Dementsprechend muss auch die \mintinline{python}{exploration_decay_rate} angepasst werden. Wir setzen diese auf 0.005.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_height_in_state.pdf}
+        \caption{TODO}
+        \label{img:graphDeepQHeightInState}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/terrain_path_height_in_state.JPG}
+        \caption{TODO}
+        \label{img:pathDeepQHeightInState}
+    \end{subfigure}
+    \caption{Ergebnisse des ersten Experiments}
+\end{figure}
+In Abbildung \ref{img:pathDeepQHeightInState} lässt sich schnell erkennen, dass das Trainingsergebnis auch hier nicht zufriedenstellend ist. Der Agent bewegt sich nur ein paar Felder weit zu einem nahe gelegenen, sehr kleinen Hügel. Der moving average in Graph \ref{img:graphDeepQHeightInState} zeigt auch keinen gewünschten Trainingsverlauf wie beispielsweise in Graph \ref{img:graphQBest}. Lediglich die Trainingsdauer hat sich wie erwartet verringert.
+
+\paragraph{Zufällige Startposition}
+Wir werden daher unseren Ansatz etwas verändern. Die Startposition wird zu Beginn jeder Episode zufällig gewählt. Das DQN erhält außerdem statt der absoluten Position im Grid die relative Position zum Startpunkt. Das bedeutet, dass dieser immer die Koordinaten (0, 0) besitzt. Dies soll die Abhängigkeit von einem immer gleichen Startzustand aufbrechen und die Aufgabe interessanter machen.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_random_spawn.pdf}
+        \caption{TODO}
+        \label{img:graphDeepQRandomSpawn}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/terrain_path_random_spawn.JPG}
+        \caption{TODO}
+        \label{img:pathDeepQRandomSpawn}
+    \end{subfigure}
+    \caption{Ergebnisse des ersten Experiments}
+\end{figure}
+Das Ergebnis lässt sich diesmal als Erfolg bezeichnen. Der Agent läuft von seiner Startposition so lange nach oben, bis es nicht mehr weiter nach oben geht. Einer dieser möglichen Pfade ist in Abbildung \ref{img:graphDeepQRandomSpawn} zu sehen. Die Aufgabe ist allerdings zu einfach. Im Graph \ref{img:graphDeepQRandomSpawn} lässt sich erkennen, dass der Großteil des Lernvorgangs bereits vor der 100-Epsioden-Marke passiert. Dies ist nicht optimal für unsere Zwecke, da wir erst ab Episode 100 den moving average und damit unsere Hauptvergleichsquelle verfolgen können.
+
+Das neue Ziel ist daher, dass der Agent nicht nur nach oben läuft, sondern einen möglichst hohen Punkt in der Nähe des Startpunktes findet. Zu diesem Zweck erweitern wir die Eingaben, die das DQN bekommt. Wir übergeben nun die Höhe und die relative Position des in diesem Zeitschritt bisher höchsten besuchten Feldes. Außerdem wird die Anzahl der übrigen Zeitschritte angefügt. Dies soll in der Theorie dazu führen, dass der Agent seine Umgebung erkundet, solange noch genügend Zeit ist. Gegen Ende der Episode sollte er dann zum bisher höchsten bekannten Gipfel laufen.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_random_spawn_2.pdf}
+        \caption{TODO}
+        \label{img:graphDeepQRandomSpawn2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/terrain_path_random_spawn_2.JPG}
+        \caption{TODO}
+        \label{img:pathDeepQRandomSpawn2}
+    \end{subfigure}
+    \caption{Ergebnisse des ersten Experiments}
+\end{figure}
+Das Ergebnis ist ähnlich wie das des vorangegangenen Experiments. Zum besseren Vergleich haben wir für die Darstellung in Abbildung \ref{img:pathDeepQRandomSpawn2} denselben Startpunkt gewählt wie in Abbildung \ref{img:pathDeepQRandomSpawn}. Der Agent orientiert sich tatsächlich hin zum etwas höheren Gipfel und scheint in einem sehr kleinen Umkreis die Umgebung zu erkunden, versäumt aber am Ende allerdings auf dem höchsten Punkt aufzuhören. Dies kann allerdings daran liegen, dass sich der Agent in jedem Zeitschritt bewegen muss und auf diese Weise nicht die Möglichkeit besitzt, genau auf dem höchsten Feld aufzuhören. Die Farbcodierung der Landschaft verrät uns allerdings, dass das Feld links oder unterhalb des vorletzten Schritts höher gelegen ist als das gewählte obere Feld. Viel wichtiger ist jedoch, dass der Graph \ref{img:graphDeepQRandomSpawn2} keinen wirklichen Trainingsfortschritt zeigt. Der moving average pendelt hier um denselben Wert und zeigt keine Verbesserung des Agenten über längere Zeit. Auch dieser Ansatz ist also für unsere Zwecke nicht geeignet.
+
+\paragraph{TODO}
 
 % test mit standart reward -> Zu einfach
 % Stärke von DQN ausnutzen
@@ -182,6 +274,7 @@ Das DQN erhält als Eingabe
 % -> Gut, um Ergebnisse zu vergleichen
 % 
 
+% Seed in random spawn
 
 
 
