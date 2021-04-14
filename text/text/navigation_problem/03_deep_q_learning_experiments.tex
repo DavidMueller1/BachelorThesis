@@ -50,7 +50,7 @@ In unserem Fall kommt noch ein weiterer Schritt hinzu, in dem wir das aktuelle N
     \end{enumerate}
 \end{enumerate}
 
-\subsection{Implementierung in Python}
+\subsection{Implementierung in Python} \label{sec:deepQImplementation}
 Wir wollen nun einen DQN-Agenten in Python implementieren. PyTorch ist eine beliebtes Deep-Learning-Framework, welches Benutzerfreundlichkeit und Leistung vereint \cite{x01_pytorch}. Als Grundlage verwenden wir das Codebeispiel unter \url{https://github.com/philtabor/Youtube-Code-Repository/blob/master/ReinforcementLearning/DeepQLearning/torch_deep_q_model.py} (Zugriff am 30.03.2021), welches für unsere Zwecke stark modifiziert wird. Das Zentrum des Geschehens ist wieder die \mintinline{python}{train()}-Methode. Der besseren Übersicht wegen sind hier einige weniger relevante Codeausschnitte herausgekürzt (gekennzeichnet mit ...). Außerdem wurde die Einrückung auf der Ebene der Methode entfernt. Die Schritte sind entsprechend der Liste aus \ref{sec:deepQPrinciple} nummeriert:
 \begin{minted}[texcomments]{python}
 def train(width: int, length: int, params, environment, ... ):
@@ -382,7 +382,7 @@ Bei den Experimenten mit fixem Epsilon fällt als Erstes auf, dass das Minimum m
 
 Wir haben allerdings einmal mehr gezeigt, dass sich die Erkundungsstrategie auf das Verhalten des Agenten auswirkt.
 
-\subsection{Experimente mit Erkundungsstrategie über die Modifikation der Belohnung}
+\subsection{Erkundungsstrategie über die Modifikation der Belohnung}
 Im Folgenden soll die Erkundungsstrategie nur über die Belohnungs-Funktion implementiert werden. Wir modifizieren unseren Agenten also zunächst dahingehend, dass er in jedem Fall greedy agiert. Die Hyperparameter für Epsilon haben also keinen direkten Einfluss mehr auf die Wahl der Aktion.
 \begin{minted}{python}
 params = DeepQParameters(
@@ -458,8 +458,8 @@ Die Graphen in Abbildung \ref{img:graphBoxEps5InRewBoth} sind genauso aufgebaut 
 \paragraph{TODO}
 Wir wollen nun versuchen, den Schwerpunkt noch etwas mehr auf die zufällige Erkundung der Umgebung zu setzen. Wir passen hierfür unsere Belohnungs-Funktion an:
 \begin{minted}{python}
-    modified_reward = (1 - exploration_rate) * reward -\
-                      exploration_rate * random.uniform(0.0, 5.0)
+modified_reward = (1 - exploration_rate) * reward -\
+                  exploration_rate * random.uniform(0.0, 5.0)
 \end{minted}
 Die \mintinline{python}{exploration_rate} wird nun nicht mehr direkt mit unserem errechneten Wert 5 multipliziert, sondern mit einem zufälligen Wert zwischen 0 und 5. Dies soll die zufällige Wahl der Aktionen und damit die zufällige Erkundung der Umgebung gewissermaßen über die Belohnung abbilden. Wir belassen es diesmal bei einem Experiment mit \mintinline{python}{start_exploration_rate=1} und \mintinline{python}{max_exploration_rate=1}, da diese Parameter im letzten Experiment konsistentere Werte und ein höheres Endergebnis geliefert haben. Wir vergleichen das Resultat wieder mit der klassischen $ \epsilon $-greedy Strategie (balu) und dem fixen Epsilon 0.0 (orange). Außerdem plotten wir das Resultat des letzten Experiments mit\linebreak\mintinline{python}{start_exploration_rate=1} (grün). Wir stellen diese Daten so wie in Abbildung \ref{img:graphEps5InRewBoth} dar.
 
@@ -506,4 +506,56 @@ Betrachten wir auch für diesen Vergleich die Boxplots der Experimente.
     \label{img:graphBoxEpsRandVs5InRewBoth}
 \end{figure}
 
-Die Abbildung \ref{img:graphBoxEpsRandVs5InRewBoth} ist ebenso aufgebaut wie Abbildung \ref{img:graphBoxEps5InRewBoth}.
+Die Graphen in Abbildung \ref{img:graphBoxEpsRandVs5InRewBoth} sind genauso aufgebaut wie in Abbildung \ref{img:graphBoxEps5InRewBoth}. Auch hier lässt sich erkennen, dass sich die Boxplots der beiden Agenten mit modifizierter Belohnungs-Funktion sehr ähneln. Lediglich der Median vom neuen Experiment (BF(zuf)) ist ein wenig höher als der des letzten Versuchs (BF(-5)). Das Resultat des neuen Experiments ist zudem schon sehr ähnlich zu dem des klassischen $ \epsilon $-greedy Agenten (Eps dynamisch). Auch hier scheint nur der Median weiter oben zu liegen. Im Vergleich zu dem des Agenten ohne Erkundungsstrategie liegt vor allem das Minimum aller anderen Experimente ein gutes Stück höher.
+
+\paragraph{TODO}
+Wir haben im letzten Experiment gesehen, dass das Austauschen des fixen Multiplikators 5 in der Belohnungs-Funktion mit einem zufälligen Wert zwischen 0 und 5 ein schnelleres Ergebnis liefert. Dies könnte bedeuten, dass Faktoren kleiner als 5 grundsätzlich besser funktionieren. Wir werden daher für unser nächstes Experiment diesen Faktor auf 0 setzen:
+\begin{minted}{python}
+modified_reward = (1 - exploration_rate) * reward - exploration_rate * 0
+\end{minted}
+Daher bleibt lediglich der reduzierte Wert der ursprünglichen Belohnung übrig:
+\begin{minted}{python}
+modified_reward = (1 - exploration_rate) * reward
+\end{minted}
+Wir betrachten erneut die durchschnittliche Belohnung der $ \epsilon $-greedy Strategie, Epsilon=0, die des letzten Experiments und natürlich die des aktuellen Experiments.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_0_vs_rand_in_rew_big.pdf}
+        \caption{TODO}
+        \label{img:graphEps0VsRandInRewBig}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_0_vs_rand_in_rew_big2.pdf}
+        \caption{TODO}
+        \label{img:graphEps0VsRandInRewBig2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.7\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_0_vs_rand_in_rew.pdf}
+        \caption{TODO}
+        \label{img:graphEps0VsRandInRew}
+    \end{subfigure}
+    \caption{Ergebnisse des ersten Experiments}
+    \label{img:graphEps0VsRandInRewBoth}
+\end{figure}
+Abbildung \ref{img:graphEps0VsRandInRewBoth} ist hierbei wieder ebenso aufgebaut wie Abbildung \ref{img:graphEps5InRewBoth}. In Graph \ref{img:graphEps0VsRandInRewBig} fällt auf, dass die Kurve des Experiments ohne zusätzlichen Faktor (Bel.-Fkt. (0)) zu Beginn schneller steigt als die mit zufälligem Faktor und auch die ohne Erkundungsstrategie. Graph \ref{img:graphEps0VsRandInRewBig2} zeigt uns, dass sie circa ab Episode 270 sehr ähnlich zu der des Experiments mit zufälligem Faktor in der Belohnung verläuft. Es lässt sich also festhalten, dass die Strategie dieses Experiments am Anfang des Trainings etwas schneller ist als die bisherigen Ansätze.
+
+Sehen wir uns nun noch die Boxplots zu diesem Experiment an.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.7\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_0_vs_rand_in_rew.pdf}
+        \caption{TODO}
+        \label{img:graphBoxEps0VsRandInRew}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.7\textwidth}
+        \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_0_vs_rand_in_rew_big.pdf}
+        \caption{TODO}
+        \label{img:graphBoxEps0VsRandInRewBig}
+    \end{subfigure}
+    \caption{Ergebnisse des ersten Experiments}
+    \label{img:graphBoxEps0VsRandInRewBoth}
+\end{figure}
+Abbildung \ref{img:graphBoxEps0VsRandInRewBoth} ist hier wieder so aufgebaut wie Abbildung \ref{img:graphBoxEps5InRewBoth}. Im Graphen \ref{img:graphBoxEps0VsRandInRewBig} sieht man, dass das neue Minimum (BF(0)) im Vergleich zum letzten Experiment (BF(zuf)) wieder etwas tiefer liegt. Allerdings ist dafür der Median größer und augenscheinlich fast auf einer Ebene mit dem des klassischen Ansatzes (Eps dynamisch). Außerdem zeigt Graph \ref{img:graphBoxEps0VsRandInRew}, dass wir mit dem neuesten Ansatz am wenigsten Ausreißer haben. Dieser Faktor ist eventuell nicht sehr wichtig, fällt aber im Vergleich zu allen anderen bisherigen Boxplots doch auf. Eventuell gleicht diese Tatsache auch zusammen mit dem größeren Median das geringere Minimum aus. Dafür spricht die Beobachtung aus Graph \ref{img:graphEps0VsRandInRewBig2}, dass sich der Verlauf sowie die Standardabweichung der beiden Experimente sehr ähneln.
+
+Aufgrund dessen und vor allem aufgrund der besseren Ergebnisse zu Beginn des Trainings, welche diesmal merklich über denen des Agenten ohne Erkundungsstrategie liegen, würden wir sagen, dass dies für diese Domäne unser bester neuer Ansatz ist.
