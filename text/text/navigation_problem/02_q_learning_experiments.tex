@@ -245,15 +245,15 @@ Lässt man den Agenten nun die im Training erzeugt Q-table verwenden, um die bes
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{q_learning/figure_best.png}
-        \caption{TODO}
+        \caption{x-Achse zeigt die Episode, y-Achse zeigt die Belohnung. Eingezeichnet sind exakte Belohnung (blau), deren moving average (orange) und der Wert von $ \epsilon $ (türkis, Achse rechts) pro Episode.}
         \label{img:graphQBest}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{q_learning/terrain_path_best_white_3.JPG}
-        \caption{TODO}
+        \caption{Bester Pfad des Agenten nach dem Training}
         \label{img:pathQBest}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Trainingsergebnisse des ersten Experiments}
 \end{figure}
 
 Eine weiter interessanter Wert ist die Anzahl der mit 0 belegten Einträge in der Q-table. Diese besitzen entweder zufällig den errechneten Q-value 0 oder wurden vom Agenten nicht berechnet. Da die meisten Einträge im 14-Stelligen Nachkommabereich liegen, ist ersteres relativ unwahrscheinlich und so lässt sich sagen, dass die Summe der mit 0 belegten Einträge ungefähr der Summe der nicht erkundeten Zustände entspricht. In Fall des aktuellen Experiments sind 850 der 10000 Einträge mit 0 belegt. Der Agent hat also ungefähr $ 91.5\% $ der Umgebung erkundet.
@@ -267,7 +267,7 @@ Die erste Experimentreihe erfolgt mit den gleichen Parametern wie im vorherigen 
 \begin{figure}[H]
     \centering
     \includegraphics{q_learning/figure_epsilon_compare.pdf}
-    \caption{Vergleich des Lernerfolgs mit und ohne $ \epsilon $-greedy Strategie} \label{img:graphQEpsComp}
+    \caption{Vergleich der Trainingsverläufe mit und ohne $ \epsilon $-greedy Strategie nach jeweils 20 Wiederholungen. Der Graph zeigt den moving average und dessen Standardabweichung pro Episode.} \label{img:graphQEpsComp}
 \end{figure}
 Die Achsen von Graph \ref{img:graphQEpsComp} sind bis auf das Fehlen der $ \epsilon $-Achse identisch mit dem aus \ref{img:graphQBest}. Die beiden Linien zeigen jeweils den Durchschnitt der moving average Werte aller 20 Experimentiterationen. Der leicht transparente Bereich um die Linien herum ist die Standartabweichung in der jeweiligen Episode.
 Es lässt sich hier sehr deutlich erkennen, dass der Agent ohne eine Erkundungsstrategie wie $ \epsilon $-greedy (blaue Linie) zu Beginn einen relativ lukrativen Pfad findet, diesen aber dann auch nicht mehr verlässt, um andere Pfade zu erkunden und so immer die gleiche Belohnung bekommt. Er wird schließlich vom $ \epsilon $-greedy Agenten (orange Linie) überholt, da dieser seine Umgebung erkundet. Dieser erhält am Ende des Trainings wesentlich höhere Belohnungen.
@@ -293,15 +293,15 @@ Die \mintinline{python}{exploration_rate} verhält sich hierbei genau so wie bei
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{q_learning/figure_epsilon_in_reward_2.pdf}
-        \caption{Landschaft mit niedriger Verteilung}
+        \caption{Graph so wie in \ref{img:graphQBest}}
         \label{img:graphQEpsInRew}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{q_learning/terrain_epsilon_in_reward.JPG}
-        \caption{Landschaft mit hoher Verteilung}
+        \caption{Bester Pfad des Agenten nach dem Training}
         \label{img:pathQEpsInRew}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Trainingsergebnisse mit Erkundungsstrategie codiert im Reward}
 \end{figure}
 Wichtig ist es an dieser Stelle zu erwähnen, dass der Graph \ref{img:graphQEpsInRew} die unverfälschte, von der Umgebung gelieferte Belohnung vor der Modifikation zeigt, da uns der tatsächliche Lernfortschritt des Agenten interessiert und man diesen sonst nicht mit den Ergebnissen anderen Experimente vergleichen könnte. Es fällt deutlich auf, dass der Lernprozess hier anders verläuft als in \ref{img:graphQBest}. Wir erhalten keine saubere Lernkurve. Trotzdem erreicht der Agent einen maximalen moving average von etwas über 462. Zum Vergleich: Der maximale moving average von \ref{img:graphQBest} liegt bei etwas über 497. Die Q-table dieses Experiments enthält 850 von 10000 mit Null belegte Einträge.
 
@@ -311,7 +311,7 @@ Wiederholt man das Experiment 20 mal, so lässt sich der folgende Durchschnitt m
 \begin{figure}[H]
     \centering
     \includegraphics{q_learning/figure_epsilon_in_reward_mean.pdf}
-    \caption{TODO} \label{img:graphQEpsInRewMean}
+    \caption{Trainingsergebnisse mit Erkundungsstrategie codiert im Reward nach 20 Wiederholungen. Graph so wie in \ref{img:graphQEpsComp}.} \label{img:graphQEpsInRewMean}
 \end{figure}
 Der Agent benötigt mit 50000 Episoden sehr lange, um seinen Höchstwert zu erreichen. Dieser scheint sich auch nach circa Episode 47 nicht mehr zu verändern, was vermutlich darauf zurückzuführen ist, dass der Agent immer greedy agiert und zu diesem Zeitpunkt kein besserer ihm bekannter Pfad mehr existiert. Verglichen mit dem Agenten ohne Erkundungsstrategie lässt sich festhalten, dass die Modifikation der Belohnung in diesem Fall eine höheren Ertrag sowie eine bessere Erkundung der Umgebung bewirkt hat. Diese Strategie dauert allerdings deutlich länger und liefert etwas weniger Ertrag als die klassische $ \epsilon $-greedy Strategie.
 % \begin{minted}{python}
