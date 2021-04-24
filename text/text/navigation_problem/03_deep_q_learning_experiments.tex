@@ -371,7 +371,7 @@ Auf den ersten Blick scheint ein Agent ohne Erkundungsstrategie (orange Linie) b
         \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEpsComparisonBig}
     \end{subfigure}
-    \caption{Boxplots der Belohnungssummen nach jeweils 100 Durchläufen mit den trainierten DQNs (100 pro Experimentreihe, also bei 20 Iterationen somit 5 Durchläufe pro DQN). Experimente von links nach rechts: dynamisches $ \epsilon $, $ \epsilon = 0.0 $, $ \epsilon = 0.2 $, $ \epsilon = 0.5 $}
+    \caption{Boxplots der Belohnungssummen nach jeweils 100 Durchläufen mit den trainierten DQNs (100 pro Experimentreihe, also bei 20 Iterationen somit 5 Durchläufe pro DQN). Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, $ \epsilon = 0.2 $, $ \epsilon = 0.5 $}
     \label{img:graphBoxEpsComparisonBoth}
 \end{figure}
 
@@ -413,20 +413,20 @@ modified_reward = (1 - exploration_rate) * reward - exploration_rate * 5
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_5_in_rew_big.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt des linken Startbereichs}
         \label{img:graphEps5InRewBig}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_5_in_rew_big2.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt des oberen Bereichs}
         \label{img:graphEps5InRewBig2}
     \end{subfigure}
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_5_in_rew.pdf}
-        \caption{TODO}
+        \caption{Kompletter Plot}
         \label{img:graphEps5InRew}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 5 (grün) und modifiziertem Reward mit Faktor 5 mit \mintinline{python}{start_exploration_rate=0.5} (rot) nach jeweils 20 Wiederholungen.}
     \label{img:graphEps5InRewBoth}
 \end{figure} 
 
@@ -442,15 +442,15 @@ Um zu beurteilen, wie sich der Agent nach dem Training verhält, sehen wir uns w
     \centering
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_5_in_rew.pdf}
-        \caption{TODO}
+        \caption{Kompletter Plot}
         \label{img:graphBoxEps5InRew}
     \end{subfigure}
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_5_in_rew_big.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEps5InRewBig}
     \end{subfigure}
-    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: dynamisches $ \epsilon $, $ \epsilon = 0.0 $, $ \epsilon = 0.2 $, $ \epsilon = 0.5 $}
+    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor 5 mit \mintinline{python}{start_exploration_rate=0.5}}
     \label{img:graphBoxEps5InRewBoth}
 \end{figure}
 
@@ -468,20 +468,20 @@ Die \mintinline{python}{exploration_rate} wird nun nicht mehr direkt mit unserem
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_rand_vs_5_in_rew_big.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt des linken Startbereichs}
         \label{img:graphEpsRandVs5InRewBig}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_rand_vs_5_in_rew_big2.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt des oberen Bereichs}
         \label{img:graphEpsRandVs5InRewBig2}
     \end{subfigure}
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_rand_vs_5_in_rew.pdf}
-        \caption{TODO}
+        \caption{Kompletter Plot}
         \label{img:graphEpsRandVs5InRew}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 5 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
     \label{img:graphEpsRandVs5InRewBoth}
 \end{figure}
 
@@ -495,15 +495,15 @@ Betrachten wir auch für diesen Vergleich die Boxplots der Experimente.
     \centering
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_rand_vs_5_in_rew.pdf}
-        \caption{TODO}
+        \caption{Kompletter Plot}
         \label{img:graphBoxEpsRandVs5InRew}
     \end{subfigure}
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_rand_vs_5_in_rew_big.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEpsRandVs5InRewBig}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor zufällig zwischen 0 und 5}
     \label{img:graphBoxEpsRandVs5InRewBoth}
 \end{figure}
 
@@ -523,20 +523,20 @@ Wir betrachten erneut die durchschnittliche Belohnung der $ \epsilon $-greedy St
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_0_vs_rand_in_rew_big.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt des linken Startbereichs}
         \label{img:graphEps0VsRandInRewBig}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_0_vs_rand_in_rew_big2.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt des oberen Bereichs}
         \label{img:graphEps0VsRandInRewBig2}
     \end{subfigure}
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_mean_eps_0_vs_rand_in_rew.pdf}
-        \caption{TODO}
+        \caption{Kompletter Plot}
         \label{img:graphEps0VsRandInRew}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 0 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
     \label{img:graphEps0VsRandInRewBoth}
 \end{figure}
 Abbildung \ref{img:graphEps0VsRandInRewBoth} ist hierbei wieder ebenso aufgebaut wie Abbildung \ref{img:graphEps5InRewBoth}. In Graph \ref{img:graphEps0VsRandInRewBig} fällt auf, dass die Kurve des Experiments ohne zusätzlichen Faktor (Bel.-Fkt. (0)) zu Beginn schneller steigt als die mit zufälligem Faktor und auch die ohne Erkundungsstrategie. Graph \ref{img:graphEps0VsRandInRewBig2} zeigt uns, dass sie circa ab Episode 270 sehr ähnlich zu der des Experiments mit zufälligem Faktor in der Belohnung verläuft. Es lässt sich also festhalten, dass die Strategie dieses Experiments am Anfang des Trainings etwas schneller ist als die bisherigen Ansätze.
@@ -546,15 +546,15 @@ Sehen wir uns nun noch die Boxplots zu diesem Experiment an.
     \centering
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_0_vs_rand_in_rew.pdf}
-        \caption{TODO}
+        \caption{Kompletter Plot}
         \label{img:graphBoxEps0VsRandInRew}
     \end{subfigure}
     \begin{subfigure}[b]{0.7\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_box_eps_0_vs_rand_in_rew_big.pdf}
-        \caption{TODO}
+        \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEps0VsRandInRewBig}
     \end{subfigure}
-    \caption{Ergebnisse des ersten Experiments}
+    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 0, modifizierter Reward mit Faktor zufällig zwischen 0 und 5.}
     \label{img:graphBoxEps0VsRandInRewBoth}
 \end{figure}
 Abbildung \ref{img:graphBoxEps0VsRandInRewBoth} ist hier wieder so aufgebaut wie Abbildung \ref{img:graphBoxEps5InRewBoth}. Im Graphen \ref{img:graphBoxEps0VsRandInRewBig} sieht man, dass das neue Minimum (BF(0)) im Vergleich zum letzten Experiment (BF(zuf)) wieder etwas tiefer liegt. Allerdings ist dafür der Median größer und augenscheinlich fast auf einer Ebene mit dem des klassischen Ansatzes (Eps dynamisch). Außerdem zeigt Graph \ref{img:graphBoxEps0VsRandInRew}, dass wir mit dem neuesten Ansatz am wenigsten Ausreißer haben. Dieser Faktor ist eventuell nicht sehr wichtig, fällt aber im Vergleich zu allen anderen bisherigen Boxplots doch auf. Eventuell gleicht diese Tatsache auch zusammen mit dem größeren Median das geringere Minimum aus. Dafür spricht die Beobachtung aus Graph \ref{img:graphEps0VsRandInRewBig2}, dass sich der Verlauf sowie die Standardabweichung der beiden Experimente sehr ähneln.
