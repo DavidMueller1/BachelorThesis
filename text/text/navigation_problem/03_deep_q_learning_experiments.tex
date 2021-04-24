@@ -383,7 +383,7 @@ Bei den Experimenten mit fixem Epsilon fällt als Erstes auf, dass das Minimum m
 
 Wir haben allerdings einmal mehr gezeigt, dass sich die Erkundungsstrategie auf das Verhalten des Agenten auswirkt.
 
-\subsection{Erkundungsstrategie über die Modifikation der Belohnung}
+\subsection{Erkundungsstrategie über die Modifikation der Belohnung} \label{sec:deepQRewardModification}
 Im Folgenden soll die Erkundungsstrategie nur über die Belohnungs-Funktion implementiert werden. Wir modifizieren unseren Agenten also zunächst dahingehend, dass er in jedem Fall greedy agiert. Die Hyperparameter für Epsilon haben also keinen direkten Einfluss mehr auf die Wahl der Aktion.
 \begin{minted}{python}
 params = DeepQParameters(

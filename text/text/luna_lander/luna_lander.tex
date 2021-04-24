@@ -35,18 +35,63 @@ params = DeepQParameters(
             # ... Rest wird erst während des Trainings belegt
         )
 \end{minted}
-Hierbei fällt auf, dass die \mintinline{python}{max_steps_per_episode} auf \mintinline{python}{0} gesetzt sind. Dies liegt daran, dass eine Episode endet, sobald der Lander das Bild verlässt, crasht oder zum Stillstand kommt. Aufgrund der sehr langen Trainingszeit beschränken wir die Anzahl der Iterationen pro Experiment auf 10.
+Hierbei fällt auf, dass die \mintinline{python}{max_steps_per_episode} auf \mintinline{python}{0} gesetzt sind. Dies liegt daran, dass die maximale Schrittanzahl in der Umgebung intern auf 1000 festgelegt ist. Eine Episode endet außerdem, sobald der Lander das Bild verlässt, crasht oder zum Stillstand kommt. Aufgrund der sehr langen Trainingszeit beschränken wir die Anzahl der Iterationen pro Experiment auf 10.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.7\textwidth]{lunar_lander/figure_classic_epsilon_03.pdf}
-    \caption{TODO} \label{img:graphClassicEps01}
+    \begin{subfigure}[b]{0.7\textwidth}
+        \includegraphics[width=\textwidth]{lunar_lander/figure_classic_epsilon.pdf}
+        \caption{Graph so wie in \ref{img:graphQEpsComp}.}
+        \label{img:lunarClassicEps01Graph}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{lunar_lander/lunar_lander_decaying_epsilon.JPG}
+        \caption{Gelandeter Lander unter Verwendung des trainierten DQNs}
+        \label{img:lunarClassicEps01Env}
+    \end{subfigure}
+    \caption{Trainingsergebnisse mit dynamischem $ \epsilon $ nach 10 Wiederholungen.} \label{img:lunarClassicEps01}
 \end{figure}
 
-Der Graph \ref{img:graphClassicEps01} zeigt wieder den durchschnittlichen moving average mitsamt seiner Standardabweichung. Die Kurve steigt bis Episode 500 stetig an. Ab hier wird der Agent allerdings sehr inkonsistent. Der Durchschnitt pendelt sich nicht bei einem Wert ein, sondern fluktuiert stark. Auch die Standardabweichung bricht stark aus. Die einzelnen Ergebnisse variieren ebenfalls sehr stark. Im ersten Durchlauf hat der Agent gelernt, die Kapsel sehr sanft direkt auf der Landeplattform zu landen. Im zweiten Durchlauf scheint der Agent keinen merklichen Lernfortschritt gemacht zu haben, da er bei jedem Landeanflug sofort crasht.
+Abbildung \ref{img:lunarClassicEps01} zeigt die Ergebnisse des ersten Experiments. Der Graph \ref{img:lunarClassicEps01Graph} zeigt wieder den durchschnittlichen moving average mitsamt seiner Standardabweichung. Die Belohnung steigt bis Episode 750 stetig an und pendelt sich dann bei einem Wert von ungefähr 230 ein. Gegen Ende circa bei Episode 1500 bricht der Plot nochmal leicht ein, steigt aber danach wieder an. Die Standardabweichung ist an den meisten Stellen gering. Die Lernkurve verläuft also weitestgehend wie gewünscht. Auch das Resultat ist sehr positiv, da der Agent unter Anwendung der trainierten DQNs den Lander in den meisten Fällen schnell aber sanft in der Zielzone landet.
 
-\paragraph{Vergleich der unterschiedlichen Ansätze}
-Trotz des unbefriedigenden Resultats des vorherigen Experiments werden wir dieses mit den anderen Ansätzen vergleichen. Wir führen zu diesem Zweck ein Experiment ohne Erkundungsstrategie und eines mit modifizierter Belohnung durch. 
+\paragraph{Training ohne Erkundungsstrategie}
+Wir wollen nun wieder die unterschiedlichen Ansätze miteinander vergleichen. Um zunächst zu sehen, wie das Training ohne eine Erkundungsstrategie verläuft, setzen wir unser $ \epsilon $ wieder konstant auf 0.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{lunar_lander/figure_classic_epsilon_vs_no_exploration.pdf}
+    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau) und statischem $ \epsilon = 0.0 $ bzw. keiner Erkundungsstrategie (gelb).} \label{img:lunarClassicEps01VsNoExploration}
+\end{figure}
+
+Wie erwartet zeigt der Graph in Abbildung \ref{img:lunarClassicEps01VsNoExploration}, dass das Training ohne Erkundungsstrategie schlechtere Ergebnisse liefert. Die durchschnittliche Belohnung steigt nicht so schnell an wie im letzten Experiment und die Standardabweichung ist größer. Der Lernfortschritt ist also langsamer und inkonsistenter als zuvor, was auch hier klar für die Verwendung der $ \epsilon $-greedy Strategie spricht.
+
+\paragraph{Training mit modifiziertem Reward}
+Zuletzt codieren wir die Erkundungsstrategie wieder ausschließlich im Reward. Wir nutzen hierfür die Ergebnisse aus Kapitel \ref{sec:deepQRewardModification} und multiplizieren die Belohnung, die die Umgebung zurückgibt, mit \mintinline{python}{(1 - exploration_rate)}:
+\begin{minted}{python}
+modified_reward = (1 - exploration_rate) * reward
+\end{minted}
+Der Agent agiert für dieses Experiment wieder ausschließlich greedy.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{lunar_lander/figure_comparison_all_01_big_1.pdf}
+        \caption{Ausschnitt des linken Startbereichs}
+        \label{img:lunarComparisonAll01Big1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{lunar_lander/figure_comparison_all_01_big_2.pdf}
+        \caption{Ausschnitt des oberen Bereichs}
+        \label{img:lunarComparisonAll01Big2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.7\textwidth}
+        \includegraphics[width=\textwidth]{lunar_lander/figure_comparison_all_01.pdf}
+        \caption{Kompletter Plot}
+        \label{img:lunarComparisonAll01}
+    \end{subfigure}
+    \caption{Graphen so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 0 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
+    \label{img:lunarComparisonAll01All}
+\end{figure}
+
 
 % Der Graph \ref{img:graphClassicEps01} zeigt wieder den durchschnittlichen moving average mitsamt seiner Standardabweichung. Der Agent scheint bis Episode 1000 einen sehr ordentlichen Lernfortschritt zu machen. Die Lernkurve beginnt hier steil und flacht dann langsam ab, so wie es wünschenswert ist. Nach Epsiode 1000 fällt die Kurve allerdings nochmals stark ab und die Standardabweichung bricht stark aus. Kurz darauf steigt der Wert wieder und erreicht ein neues Maximum, bevor er wieder leicht abfällt. Der Agent landet den Lander bei der Anwendung des DQNs relativ ruppig und lässt nach der Landung meist die seitlichen Triebwerke laufen.
 
