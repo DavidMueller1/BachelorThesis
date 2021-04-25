@@ -1,1 +1,14 @@
-\chapter{Einleitung}\label{sec:Introduction}
+\chapter{Einleitung} \label{sec:introduction}
+[K.I. ist faszinierend]. Das selbstständige erlernen ... hat starke Ähnlichkeit mit dem  Bereits seit Ende des 20. Jahrhunderts haben sich viele Hollywood-Produktionen diese Faszination zu Nutzen gemacht. Wenn man erfolgreichen Filmreihen wie \glqq Matrix\grqq{} oder \glqq Terminator\grqq{} Glauben schenkt, so werden die Maschinen früher oder später die Welt übernehmen. Wenn sie allerdings nicht gerade zu diesem Zweck gebaut wurden, setzt dies eine Art von Bewusstsein voraus, von dem die aktuelle Forschung noch weit entfernt ist. 
+
+Computer sind gut darin, unfassbar viele Berechnungen sehr schnell durchzuführen. Daher ist es naheliegend, sie für das Lösen von komplexen Aufgaben zu verwenden. Noch interessanter ist der Gedanke, dass wir dem Computer nicht vorgeben wie er eine Aufgabe lösen soll, sondern ihn stattdessen in eine Umgebung stellen, die er selbstständig erkunden und verstehen soll. Er soll also ähnlich wie wir selbstständig lernen.
+
+Während der Drang Neues zu entdecken in der Natur des Menschen liegt, benötigt eine künstliche Intelligenz irgend eine Form von Anregung zur \textit{Erkundung} des Umfelds. Um die gestellte Aufgabe zu lösen, muss sie außerdem das gesammelte Wissen \textit{ausnutzen}. Nach \cite{06_sutton2018reinforcement} ist das richtige ausbalancieren dieser beiden Verhalten essenziell für den Lernerfolg. Man spricht hier vom \textit{Exploration-Exploitation Dilemma}.
+
+Es existieren viele Strategien für das Erkunden des Environments. Eine der bekanntesten ist die $ \epsilon $-greedy Strategie, bei der der Agent meistens die beste ihm bekannte Aktion wählt, mit der Wahrscheinlichkeit $ \epsilon $ allerdings eine zufällige Aktion wählt \cite{07_dabney2020temporallyextended}\cite{06_sutton2018reinforcement}. Dies sorgt dafür, dass der Agent auch Aktionen ausprobiert, die er zuvor noch nicht versucht hat und die sich eventuell als besser herausstellen.
+
+\paragraph{Zielsetzung}
+Wir experimentieren in dieser Arbeit mit dem Ansatz, eine Erkundungsstrategie allein durch die Modifikation des von der Umgebung zurückgegebenen Rewards zu codieren. Wir vergleichen die Ergebnisse dieses Ansatzes mit der $ \epsilon $-greedy Strategie und einem Agenten, der immer die beste ihm bekannte Aktion wählt. Letzteres soll zeigen, ob unsere Methode einen Vorteil gegenüber einem Agenten ohne Erkundungsstrategie bringt.
+
+\paragraph{Aufbau der Arbeit}
+Zu diesem Zweck bauen wir in Kapitel \ref{sec:NavigationProblem} zunächst eine eigene Domäne, um maximale Kontrolle über das Environment zu haben. Anschließend erklären wir das Prinzip von Q-Learning, bevor wir unsere Experimente beschreiben und analysieren. Im Anschluss daran erklären wir kurz das Konzept von Deep-Q-Learning, um unseren Ansatz ebenfalls mit ... zu testen. In Kapitel \ref{sec:LunaLander} nutzen wir unsere Erkenntnisse aus Kapitel \ref{sec:NavigationProblem}, um unseren Ansatz ebenfalls auf der Domäne des Lunar Landers zu testen. 
