@@ -1,8 +1,8 @@
 \chapter{Lunar-Lander-Domäne}\label{sec:LunaLander}
-TODO (Begründen warum noch ein environment)
+Wir wollen nun untersuchen, wie sich ein Agent mit unserer Strategie in einer anderen Domäne verhält.
 
 \section{Die Umgebung und die Aufgabe}
-Wir nutzen für die folgenden Experimente das Toolkit \textit{OpenAi Gym} \cite{x03_openaiGym}. OpenAi Gym ist eine Kollektion von Environments, die für das Trainieren und Vergleichen von diversen Machine-Learning-Algorithmen gedacht sind. Die Entwickler wollen erreichen, die Umgebungen so zugänglich wie möglich zu machen.
+Wir nutzen für die folgenden Experimente das Toolkit \textit{OpenAi Gym} \cite{x03_openaiGym}. OpenAi Gym ist eine Kollektion von Environments, die für das Trainieren und Vergleichen von diversen Machine-Learning-Algorithmen gedacht sind. Ein wichtiges Kriterium für die Entwickler ist, die Umgebungen so zugänglich wie möglich zu machen.
 
 Wir verwenden für unsere Versuche das Environment \glqq LunarLander-v2\grqq{}. Der Agent soll hierbei lernen, eine kleine, zweidimensionale Raumkapsel auf einer Landeplattform (markiert mit gelben Fahnen) zu landen. Hierbei ist es wichtig, dass das Raumschiff sachte auf dem Boden aufsetzt, ohne dass seine Landefüße beschädigt werden. Eine visuelle Repräsentation des Environments ist in Abbildung \ref{img:lunarLanderExample} dargestellt.
 
@@ -66,11 +66,11 @@ Wir wollen nun wieder die unterschiedlichen Ansätze miteinander vergleichen. Um
 Wie erwartet zeigt der Graph in Abbildung \ref{img:lunarClassicEps01VsNoExploration}, dass das Training ohne Erkundungsstrategie schlechtere Ergebnisse liefert. Die durchschnittliche Belohnung steigt nicht so schnell an wie im letzten Experiment und die Standardabweichung ist größer. Der Lernfortschritt ist also langsamer und inkonsistenter als zuvor, was auch hier klar für die Verwendung der $ \epsilon $-greedy Strategie spricht.
 
 \paragraph{Training mit modifiziertem Reward}
-Zuletzt codieren wir die Erkundungsstrategie wieder ausschließlich im Reward. Wir nutzen hierfür die Ergebnisse aus Kapitel \ref{sec:deepQRewardModification} und multiplizieren die Belohnung, die die Umgebung zurückgibt, mit \mintinline{python}{(1 - exploration_rate)}:
+Zuletzt bilden wir die Erkundungsstrategie wieder ausschließlich im Reward ab. Wir nutzen hierfür die Ergebnisse aus Kapitel \ref{sec:deepQRewardModification} und multiplizieren die Belohnung, die die Umgebung zurückgibt, mit \mintinline{python}{(1 - exploration_rate)}:
 \begin{minted}{python}
 modified_reward = (1 - exploration_rate) * reward
 \end{minted}
-Damit der Agent zu Beginn überhaupt eine Belohnung bekommt starten wir mit einer \mintinline{python}{exploration_rate} von 0.5, die \mintinline{python}{start_exploration_rate} sowie die \mintinline{python}{max_exploration_rate} werrden also auf 0.5 gesetzt. Der Agent agiert für dieses Experiment wieder ausschließlich greedy.
+Damit der Agent zu Beginn überhaupt eine Belohnung bekommt starten wir mit einer \mintinline{python}{exploration_rate} von 0.5, die \mintinline{python}{start_exploration_rate} und \mintinline{python}{max_exploration_rate} werden also auf 0.5 gesetzt. Der Agent agiert für dieses Experiment wieder ausschließlich greedy.
 
 \begin{figure}[h!]
     \centering
@@ -89,11 +89,13 @@ Damit der Agent zu Beginn überhaupt eine Belohnung bekommt starten wir mit eine
         \caption{Kompletter Plot}
         \label{img:lunarComparisonAll01}
     \end{subfigure}
-    \caption{Graphen so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 0 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
+    \caption{Graphen so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb) und modifiziertem Reward mit Faktor 0 mit \mintinline{python}{start_exploration_rate=0.5} (grün) nach jeweils 20 Wiederholungen.}
     \label{img:lunarComparisonAll01All}
 \end{figure}
 
-Wir vergleichen den Verlauf des Trainings mit denen der vorangegangenen Experimente. Für den Vergleich haben wir in diesem Versuch selbstverständlich wieder den echten Reward der Umgebung genommen. Betrachten wir zunächst die ersten 800 Episoden, dargestellt in Abbildung \ref{img:lunarComparisonAll01Big1}. Die Belohnung steigt etwas schneller an als bei $ \epsilon = 0 $ und die Standardabweichung ist ein wenig geringer. In Episode 800 liegt der Belohnungswert etwa auf gleicher Höhe mit dem der klassischen $ \epsilon $-greedy Strategie. Es sieht so aus, als würde sich unsere Strategie hier besser schlagen als das Fehlen einer Erkundungsstrategie. Betrachten wir nun allerdings den Verlauf nach Episode 800, gut zu erkennen in Abbildung \ref{img:lunarComparisonAll01Big2}, so fällt auf, dass der moving average sogar unter den Wert vom Experiment mit $ \epsilon = 0 $ fällt. Die Standardabweichung bricht hier ebenfalls sehr stark aus. Beides bessert sich erst gegen Ende des Trainings wieder. Es lässt sich hier also keine absolut klare Aussage über einen definitiven Vorteil unserer Strategie gegenüber den Fehlen einer Erkundungsstrategie treffen. Betrachten wir noch die Boxplots aus Abbildung \ref{img:lunarComparisonAllBox01Both} für die Experimente nach jeweils 100 Durchläufen mit den jeweiligen DQNs.
+Wir vergleichen den Verlauf des Trainings mit denen der vorangegangenen Experimente. Für den Vergleich haben wir in diesem Versuch selbstverständlich wieder den echten Reward der Umgebung genommen. Betrachten wir zunächst die ersten 800 Episoden, dargestellt in Abbildung \ref{img:lunarComparisonAll01Big1}. Die Belohnung steigt etwas schneller an als bei $ \epsilon = 0 $ und die Standardabweichung ist geringer. In Episode 800 liegt der Belohnungswert etwa auf gleicher Höhe mit dem der klassischen $ \epsilon $-greedy Strategie. Es sieht so aus, als würde sich unsere Strategie hier besser schlagen als ein Agent ohne Erkundungsstrategie. Betrachten wir nun allerdings den Verlauf nach Episode 800, gut zu erkennen in Abbildung \ref{img:lunarComparisonAll01Big2}, so fällt auf, dass der moving average sogar unter den Wert vom Experiment mit $ \epsilon = 0 $ fällt. Die Standardabweichung bricht hier ebenfalls sehr stark aus. Beides bessert sich erst gegen Ende des Trainings wieder. Diese Tatsache lässt unsere Strategie hier nicht ganz so gut aussehen. Es lässt sich deswegen keine absolut klare Aussage über einen definitiven Vorteil unserer Strategie gegenüber dem Nichtverwenden einer Erkundungsstrategie treffen.
+
+Betrachten wir noch die Boxplots aus Abbildung \ref{img:lunarComparisonAllBox01Both} für die Experimente nach jeweils 100 Durchläufen mit den jeweiligen DQNs.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.7\textwidth}
@@ -109,7 +111,7 @@ Wir vergleichen den Verlauf des Trainings mit denen der vorangegangenen Experime
     \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor 0 mit \mintinline{python}{start_exploration_rate=0.5}.}
     \label{img:lunarComparisonAllBox01Both}
 \end{figure}
-Wie erwartet ist der Median beim klassischen $ \epsilon $-greedy Ansatz am größten, wenn auch nicht um viel. Der untere Whisker liegt hier ebenfalls am höchsten. Dies ist das erwartete Resultat. Vergleichen wir nun die letzten beiden Versuche miteinander. Die Quantile unseres Experiments liegen alle leicht über denen des Versuchs ohne Erkundungsstrategie. Die Unterschiede sind vorhanden, allerdings nicht sehr signifikant. Unser Ansatz scheint etwas bessere Ergebnisse zu liefern als ein Training ohne Erkundungsstrategie, allerdings lässt sich anhand dieser Daten schwer eine endgültige Aussage hierüber treffen. Erforderlich wären vermutlich eine größere Episodenanzahl, wesentlich mehr Iteration pro Experiment und weitere Durchläufe zum Anpassen der Hyperparameter. Hierfür fehlen uns für diese Domäne im Zuge dieser Arbeit die erforderlichen Rechenressourcen.
+Wie erwartet ist der Median beim klassischen $ \epsilon $-greedy Ansatz am größten, wenn auch nicht um viel. Vergleichen wir die letzten beiden Versuche miteinander, so lässt sich erkennen, dass alle Quantile unseres Experiments über denen des Versuchs ohne Erkundungsstrategie liegen. Unser Ansatz scheint etwas bessere Ergebnisse zu liefern als ein Training ohne Erkundungsstrategie und der Boxplot kann dem der $ \epsilon $-greedy-Strategie fast das Wasser reichen. Allerdings lässt sich anhand dieser Daten schwer eine endgültige Aussage hierüber treffen. Erforderlich wären eine größere Episodenanzahl, wesentlich mehr Iteration pro Experiment und weitere Durchläufe zum Anpassen der Hyperparameter. Hierfür fehlen uns für diese Domäne im Zuge dieser Arbeit die erforderlichen Rechenressourcen.
 
 % Der Graph \ref{img:graphClassicEps01} zeigt wieder den durchschnittlichen moving average mitsamt seiner Standardabweichung. Der Agent scheint bis Episode 1000 einen sehr ordentlichen Lernfortschritt zu machen. Die Lernkurve beginnt hier steil und flacht dann langsam ab, so wie es wünschenswert ist. Nach Epsiode 1000 fällt die Kurve allerdings nochmals stark ab und die Standardabweichung bricht stark aus. Kurz darauf steigt der Wert wieder und erreicht ein neues Maximum, bevor er wieder leicht abfällt. Der Agent landet den Lander bei der Anwendung des DQNs relativ ruppig und lässt nach der Landung meist die seitlichen Triebwerke laufen.
 
