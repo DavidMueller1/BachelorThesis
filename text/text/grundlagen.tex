@@ -6,7 +6,7 @@ Einer der ersten Durchbrüche im Bereich des Reinforcement Learning war die Entw
 Dieses Kapitel stützt sich zu einem Großteil auf das Buch \textit{Reinforcement Learning: An Introduction, Second Edition} \cite{06_sutton2018reinforcement}. Falls nicht anders angegeben, wurden die Informationen hieraus entnommen.
 
 \paragraph{Markov Decision Processes}
-Alle Experimente in dieser Arbeit zielen darauf ab, Probleminstanzen von \textit{Markov Decision Processes} -- oder kurz MDPs -- zu lösen. In MDPs gibt es eine handelnde Instanz, den \textit{Agenten}, welcher mit seiner \textit{Umgebung} interagiert. Diese Interaktion erfolgt Sequenziell in Zeitschritten $ t = 0, 1, 2, 3, ... $. Der Agent erhält in jedem Zeitschritt $ t $ eine Repräsentation seiner Umgebung, den Zustand $ S_t $, und führt basierend darauf eine \textit{Aktion} $ A_t $ aus. Für diese erhält er von der Umgebung einen Reward $ R_{t + 1} $, sowie einen Folgezustand $ S_{t + 1} $. Abbildung \ref{img:mdp} zeigt eine schematische Repräsentation dieses Ablaufs.
+Alle Experimente in dieser Arbeit zielen darauf ab, Probleminstanzen von \textit{Markov Decision Processes} -- oder kurz MDPs -- zu lösen. In MDPs gibt es eine handelnde Instanz, den \textit{Agenten}, welcher mit seiner \textit{Umgebung} interagiert. Diese Interaktion erfolgt sequenziell in Zeitschritten $ t = 0, 1, 2, 3, ... $. Der Agent erhält in jedem Zeitschritt $ t $ eine Repräsentation seiner Umgebung, den Zustand $ S_t $, und führt basierend darauf eine \textit{Aktion} $ A_t $ aus. Für diese erhält er von der Umgebung einen Reward $ R_{t + 1} $, sowie einen Folgezustand $ S_{t + 1} $. Abbildung \ref{img:mdp} zeigt eine schematische Repräsentation dieses Ablaufs.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\textwidth, keepaspectratio=true]{mdp.JPG}
@@ -18,7 +18,7 @@ Ziel des Agenten ist es nun, seinen erwarteten Ertrag $ G_t $ zu maximieren. Im 
 \begin{align}
     G_t \doteq R_{t + 1} + R_{t + 2} + R_{t + 3} + ... + R_T \text{,} \label{eq:expected_reward}
 \end{align}
-wobei T der letzte Zeitschritt einer Episode ist. In vielen Fällen ist die Interaktion zwischen Agent und Umgebung allerdings nicht endlich. Somit ist in diesen Fällen $ T = \infty $ und der Ertrag, den der Agent maximieren soll, nach \ref{eq:expected_reward} ebenfalls potenziell unendlich. Wir führen deswegen das \textit{discounting} ein. Für $ G_t $ ergibt sich hiermit:
+wobei T der letzte Zeitschritt einer Episode ist. In vielen Fällen ist die Interaktion zwischen Agent und Umgebung allerdings nicht endlich. Somit ist in diesen Fällen $ T = \infty $ und der Ertrag, den der Agent maximieren soll, nach Gleichung \ref{eq:expected_reward} ebenfalls potenziell unendlich. Wir führen deswegen das \textit{discounting} ein. Für $ G_t $ ergibt sich hiermit:
 \begin{align}
     \begin{split}
         G_t & \doteq R_{t + 1} + \gamma R_{t + 2} + \gamma^2 R_{t + 3} + ...\\
@@ -38,7 +38,7 @@ Wir benötigen nun eine Möglichkeit einzuschätzen, wie gut ein Zustand $ s $ i
     & = E_\pi \left[\sum_{k = 0}^{\infty} \gamma^k R_{t + k + 1} | S_t = s \right],
     \end{split}
 \end{align}
-wobei $ E_\pi $ der Erwartungswert vom Ertrag $ G_t $ nach \ref{eq:expected_discounted_reward} ist, wenn der Agent sich im Zustand $ S_t = s $ befindet und der Policy $ \pi $ folgt.
+wobei $ E_\pi $ der Erwartungswert vom Ertrag $ G_t $ nach Gleichung \ref{eq:expected_discounted_reward} ist, wenn der Agent sich im Zustand $ S_t = s $ befindet und der Policy $ \pi $ folgt.
 
 \paragraph{Action-Value Functions}
 Ähnlich hierzu gibt die \textit{action-value function} $ q_\pi $ an, wie profitabel es für den Agenten ist, in einem gegebenen Zustand eine gewisse Aktion auszuführen, wenn der Agent der Policy $ \pi $ folgt.
@@ -58,7 +58,7 @@ Das Ziel des Agenten ist, die optimale Policy $ \pi $ für ein Markov Decision P
     \pi \geq \pi' \text{ if and only if } v_\pi(s) \geq v_{\pi'}(s) \text{ for all } s \in S.
 \end{align}
 
-Es gibt immer eine Policy, die besser als oder gleichwertig mit allen anderen Policies ist. Diese wird -- oder im Fall, dass es mehrere gibt werden -- als $ \pi_* $ bezeichnet. Die besten Policies besitzen die gleich state-value function, welche die \textit{optimale state-value function} $ v_* $ genannt wird und definiert wird als
+Es gibt immer eine Policy, die besser als oder gleichwertig mit allen anderen Policies ist. Diese wird -- oder im Fall, dass es mehrere gibt werden -- als $ \pi_* $ bezeichnet. Die besten Policies besitzen die gleiche state-value function, welche die \textit{optimale state-value function} $ v_* $ genannt wird und definiert wird als
 \begin{align}
     v_*(s) \doteq \max_\pi v_\pi(s)
 \end{align}
@@ -82,13 +82,13 @@ Das folgende Kapitel beschreibt, wie die Bellman equation verwendet wird, um $ q
 \subsection{Der Ablauf von Q-Learning} \label{sec:q_learning_process}
 Das Ziel von Q-Learning ist, die optimale Policy zu finden, indem der Agent die optimalen Q-values für jedes state-action Paar erlernt.
 
-Der Q-Learning Algorithmus benutzt die Bellman equation als Update-Regel, um nach und nach die Q-values für jedes state-action Paar anzunähern. Dieses Verfahren nennt man \textit{value iteration}.
+Der Q-Learning-Algorithmus benutzt die Bellman equation als Update-Regel, um nach und nach die Q-values für jedes state-action Paar anzunähern. Dieses Verfahren nennt man \textit{value iteration}.
 
 Bei überschaubaren Umgebungen ist es möglich, die Werte für jedes state-action Paar in einer Tabelle, der so genannten \textit{Q-table} zu speichern. Zu Beginn weiß der Agent nichts über eine Umgebung. Die Q-table ist dementsprechend leer beziehungsweise ist der Wert jedes state-action Paares 0. Der Agent operiert nun eine vorbestimmte Anzahl von \textit{Episoden} in der Umgebung und produziert im Laufe der Zeit neue Q-values, mit denen die Q-table aktualisiert wird.
 
 Zu Beginn jedes Schritts wählt der Agent eine Aktion für den aktuellen Zustand aus. Intuitiv macht es Sinn, die beste bisher bekannte Aktion zu wählen, um die Belohnung zu maximieren. Dieses Vorgehen ist allerdings nicht zielführend, da der Agent am Anfang nichts über seine Umgebung weiß. Er benötigt also für die Wahl seiner Aktionen eine bessere Strategie. Auf dieses Problem gehen wir in Kapitel \ref{sec:exploration_exploitation} näher ein.
 
-Nehmen wir an, der Agent hat im Zustand $ s $ zum Zeitschritt $ t $ eine Aktion $ a $ ausgewählt. Nach der Bellman equation \ref{eq:bellman} ist dann die Q-value $ q(s, a) $ (der Übersicht in Gleichung \ref{eq:updateQValue} wegen lassen wir die Policy $ \pi $ hier weg, gemeint ist natürlich $ q_\pi(s, a) $) die für die Aktion erhaltene Belohnung $ R_{t + 1} $ plus der maximale erwartete Ertrag eines folgenden state-action Paares, also
+Nehmen wir an, der Agent hat im Zustand $ s $ zum Zeitschritt $ t $ eine Aktion $ a $ ausgewählt. Nach der Bellman equation \ref{eq:bellman} ist dann die Q-value $ q(s, a) $ (der Übersicht in Gleichung \ref{eq:bellmanClean} und \ref{eq:updateQValue} wegen lassen wir die Policy $ \pi $ hier weg, gemeint ist natürlich $ q_\pi(s, a) $) die für die Aktion erhaltene Belohnung $ R_{t + 1} $ plus der maximale erwartete Ertrag eines folgenden state-action Paares, also
 \begin{align}
     q(s, a) = R_{t + 1} + \gamma \max_{a'} q(s', a'). \label{eq:bellmanClean}
 \end{align}
@@ -107,8 +107,7 @@ In Kapitel \ref{sec:q_learning_process} sind wir auf die Notwendigkeit einer Str
 
 Diese Strategie klingt auf den ersten Blick sinnvoll, ist aber nicht so zielführend wie es scheint. Der Agent versäumt es andere Aktionen auszuprobieren, die eventuell eine bessere Belohnung liefern könnten. Er nutzt nur die ihm bekannten aus (\textit{exploitation}). Besser wäre es, wenn er ebenfalls Zeit in die Erkundung (\textit{exploration}) der Umgebung stecken würde.
 
-Dies kann realisiert werden, indem der Agent die meiste Zeit \glqq gierig\grqq{} (\textit{greedy}) agiert und die Aktion mit dem besten geschätzten Ertrag wählt, mit einer Wahrscheinlichkeit von $ \epsilon $ allerdings ab und zu zufällig eine von allen verfügbaren Aktionen auswählt. $ \epsilon $ ist hierbei ein Wert zwischen 0 und 1, der entweder statisch oder dynamisch definiert wird. Auf diese Weise wird erreicht, dass der Agent auch Aktionen ausprobieren kann, welche er zuvor noch nicht gesehen hat. Diese Strategie wird \textit{$ \epsilon $-greedy-Strategie} genannt und zählen nach \cite{07_dabney2020temporallyextended} auch heute noch bei der Erkundung der Umgebung zu den am meisten benutzten.
-% Ref zu Beispiel
+Dies kann realisiert werden, indem der Agent die meiste Zeit \glqq gierig\grqq{} (\textit{greedy}) agiert und die Aktion mit dem besten geschätzten Ertrag wählt, mit einer Wahrscheinlichkeit von $ \epsilon $ allerdings ab und zu zufällig eine von allen verfügbaren Aktionen auswählt. $ \epsilon $ ist hierbei ein Wert zwischen 0 und 1, der entweder statisch oder dynamisch definiert wird. Auf diese Weise wird erreicht, dass der Agent auch Aktionen ausprobieren kann, welche er zuvor noch nicht gesehen hat. Diese Strategie wird \textit{$ \epsilon $-greedy-Strategie} genannt und zählt nach \cite{07_dabney2020temporallyextended} auch heute noch bei der Erkundung der Umgebung zu den am meisten benutzten.
 
 \subsection{Implementierung in Python} \label{sec:qLearningImplementation}
 Mit diesem Wissen werden wir nun einen Q-Learning-Algorithmus in Python implementieren.
@@ -143,7 +142,7 @@ def train(self, width: int, length: int, params: Parameters,
 \end{minted}
 \mintinline{python}{width} und \mintinline{python}{length} beschreiben die Breite und die Länge des Rasters. Dies wird in Kapitel \ref{img:terrainMain} deutlich werden. Mit diesen Daten wird die Größe der Q-table bestimmt. Mit den \mintinline{python}{params} übergeben wir der Funktion die Hyperparameter. Das \mintinline{python}{environment} ist die Umgebung, in der der Agent operieren soll. Die restlichen Parameter sind optional und beziehen sich auf die Visualisierung der Ergebnisse während des Trainings.
 
-Wir verwenden für die Implementierung der Q-table \textit{NumPy}, die primäre Bibliothek für die Array-Programmierung in Python \cite{harris2020array}. Wir erzeugen ein zweidimensionales NumPy-Array, das für jeden Zustand unserer Umgebung eine Zeile und für jede Aktion eine Spalte enthält. Alle Elemente werden zunächst mit 0 initialisiert. Außerdem setzen wir unser $ \epsilon $ auf die in den Hyperparametern festgelegte \mintinline{python}{start_exploration_rate}. Wir erstellen außerdem einen Buffer, welcher die Tupel aus Zustand, Aktion, Belohnung und Folgezustand enthält. Dieser wird am Ende jeder Episode gemischt und dann abgearbeitet. Dieses Verfahren löst nach TODO starke Pfadabhängigkeiten auf. In Kapitel \ref{sec:deepQPrinciple} gehen wir hierauf näher ein.
+Wir verwenden für die Implementierung der Q-table \textit{NumPy}, die primäre Bibliothek für die Array-Programmierung in Python \cite{harris2020array}. Wir erzeugen ein zweidimensionales NumPy-Array, das für jeden Zustand unserer Umgebung eine Zeile und für jede Aktion eine Spalte enthält. Alle Elemente werden zunächst mit 0 initialisiert. Außerdem setzen wir unser $ \epsilon $ auf die in den Hyperparametern festgelegte \mintinline{python}{start_exploration_rate}. Wir erstellen außerdem einen Buffer, welcher die Tupel aus Zustand, Aktion, Belohnung und Folgezustand enthält. Dieser wird am Ende jeder Episode gemischt und dann abgearbeitet. Dieses Verfahren löst starke Pfadabhängigkeiten auf. In Kapitel \ref{sec:deepQPrinciple} gehen wir hierauf näher ein.
 \begin{minted}{python}
     q_table = np.zeros((width * length, 4))
     exploration_rate = params.start_exploration_rate
@@ -186,7 +185,7 @@ In jedem Zeitschritt wenden wir für die Wahl der Aktion unsere $ \epsilon $-gre
                 time.sleep(0.04)
 \end{minted}
 
-Am Ende jeder Episode aktualisieren wir die entsprechenden Einträge in der Q-table mit den Daten aus dem Buffer. Hierfür wird die Gleichung für die Berechnung der Q-value \ref{eq:updateQValue} angewendet:
+Am Ende jeder Episode aktualisieren wir die entsprechenden Einträge in der Q-table mit den Daten aus dem Buffer. Hierfür wird die Formel für die Berechnung der Q-value aus Gleichung \ref{eq:updateQValue} angewendet:
 \begin{minted}{python}
         random.shuffle(buffer)
         while len(buffer) > 0:
@@ -220,7 +219,7 @@ Nach \cite{11_maxim2018deeprl} ist die Benutzung von Neuronalen Netzen eine der 
 Für das stabile und effiziente Trainieren eines DQNs gibt es nach \cite{11_maxim2018deeprl} einige Techniken und Tricks. Die Informationen diesbezüglich wurden -- falls nicht anders angegeben -- aus \cite{11_maxim2018deeprl} entnommen.
 
 \paragraph{$ \epsilon $-greedy}
-Die $ \epsilon $-greedy Strategie löst das Exploration versus Exploitation Dilemma. Da wir uns hiermit bereits in Kapitel \ref{sec:exploration_exploitation} befasst haben, halten wir uns an dieser Stelle nicht weiter damit auf.
+Die $ \epsilon $-greedy-Strategie soll das \glqq Exploration versus Exploitation\grqq{}-Dilemma lösen. Da wir uns hiermit bereits in Kapitel \ref{sec:exploration_exploitation} befasst haben, halten wir uns an dieser Stelle nicht weiter damit auf.
 
 \paragraph{Replay buffer}
 Die Daten, die der Agent im Laufe des Trainings sammelt, sind nicht unabhängig voneinander. Sie liegen höchst wahrscheinlich sehr nahe beieinander, da sie meist zur selben Episode gehören. Dazu kommt, dass die Verteilung der Daten durch die aktuelle Policy, beziehungsweise bei der Verwendung von $ \epsilon $-greedy teilweise zufällig bestimmt wird. Wünschenswert wäre eine Verteilung der Trainingsdaten identisch zu Stichproben unter Verwendung der optimalen Policy, die wir erlernen wollen.
@@ -228,14 +227,14 @@ Die Daten, die der Agent im Laufe des Trainings sammelt, sind nicht unabhängig 
 Um dem entgegenzuwirken verwenden wir einen großen Speicher, welcher unsere vergangenen Beobachtungen enthält. Anstatt nun mit den letzten Beobachtungen zu trainieren, entnehmen wir zufällig Daten aus diesem Speicher. Diese Methode nennt man \textit{replay buffer}. In Kapitel \ref{sec:qLearningImplementation} verwenden wir ebenfalls einen solchen replay buffer.
 
 \paragraph{Target network}
-Ein ähnliches Problem stellt der Zusammenhang zwischen benachbarten Schritten dar. Die Bellman equastion aus \ref{eq:bellman} besagt, dass wir den Wert von $ q_\pi(s, a) $ über $ q_\pi(s', a') $ berechnen können. Die Zustände $ s $ und $ s' $ sind allerdings nur einen Schritt voneinander entfernt. Sie sind also sehr ähnlich und vom Neuronalen Netz schwer zu unterscheiden. Das hat zur Folge, dass wir bei einem Update der Parameter des Netzes für die Annäherung von $ q_\pi(s, a) $ an das gewünschte Resultat indirekt auch den Wert für $ q_\pi(s', a') $ verändern können. Dies kann das Training sehr instabil machen.
+Ein ähnliches Problem stellt der Zusammenhang zwischen benachbarten Schritten dar. Die Bellman equasion aus Gleichung \ref{eq:bellman} besagt, dass wir den Wert von $ q_\pi(s, a) $ über $ q_\pi(s', a') $ berechnen können. Die Zustände $ s $ und $ s' $ sind allerdings nur einen Schritt voneinander entfernt. Sie sind also sehr ähnlich und vom Neuronalen Netz schwer zu unterscheiden. Das hat zur Folge, dass wir bei einem Update der Parameter des Netzes für die Annäherung von $ q_\pi(s, a) $ an das gewünschte Resultat indirekt auch den Wert für $ q_\pi(s', a') $ verändern können. Dies kann das Training sehr instabil machen.
 
-Deshalb verwenden wir ein so genanntes \textit{target network}. Das target network ist eine Kopie des training networks -- bei uns später auch policy network genannt --, welches lediglich alle $ N $ Schritte oder Episoden synchronisiert wird. $ N $ ist hierbei ein weiterer Hyperparameter, den wir bei später als \mintinline{python}{target_update} bezeichnen. Mit dieser Kopie besitzen wir nun fixierte Werte für $ q_\pi(s', a') $, was das Training wesenlicht stabiler machen sollte.
+Deshalb verwenden wir ein so genanntes \textit{target network}. Das target network ist eine Kopie des training networks -- bei uns später auch policy network genannt --, welches lediglich alle $ N $ Schritte oder Episoden synchronisiert wird. $ N $ ist hierbei ein weiterer Hyperparameter, den wir bei später als \mintinline{python}{target_update} bezeichnen. Mit dieser Kopie besitzen wir nun fixierte Werte für $ q_\pi(s', a') $, was das Training wesentlich stabiler machen sollte.
 
 \paragraph{Der Trainingsablauf von DQN}
-Wir betrachten nun einen klassischen Algorithmus für DQN. \cite{11_maxim2018deeprl} entnimmt dessen Schritte den bekannten Papern \textit{Playing Atari with Deep Reinforcement Learning} \cite{13_mnih2013atari} und \textit{Human-Level Control Through Deep Reinforcement Learning} \cite{12_mnih2015humanlevel}. Sinngemäß wiedergegeben ist der Ablauf nach \cite{12_mnih2015humanlevel} wiefolgt:
+Wir betrachten nun einen klassischen Algorithmus für DQN. \cite{11_maxim2018deeprl} entnimmt dessen Schritte den bekannten Papern \textit{Playing Atari with Deep Reinforcement Learning} \cite{13_mnih2013atari} und \textit{Human-Level Control Through Deep Reinforcement Learning} \cite{12_mnih2015humanlevel}. Sinngemäß wiedergegeben ist der Ablauf nach \cite{12_mnih2015humanlevel} wie folgt:
 \begin{enumerate}[nosep]
-    \item Initialisieren der replay memory Kapazität
+    \item Initialisieren der replay-memory-Kapazität
     \item Initialisieren des Hauptnetzes mit zufälligen Parametern
     \item Kopie des Hauptnetzes anlegen, das target network
     \item \textit{For each Episode do}
@@ -255,7 +254,7 @@ Wir betrachten nun einen klassischen Algorithmus für DQN. \cite{11_maxim2018dee
         \end{enumerate}
     \end{enumerate}
 \end{enumerate}
-In unserem Fall kommt noch ein weiterer Schritt hinzu, in dem wir das aktuelle Netz kopieren und als \mintinline{python}{best_net} speichern, wenn der moving average einen neuen Höchstwert erreicht. Dieses Netz wird dann am Ende des Trainings zurückgegeben. Dies soll sicherstellen, dass zum Schluss das beste Trainingsergebnis ausgegeben wird, auch wenn der Agent im Laufe der Zeit Sachen wieder verlernt hat. Wir ergänzen also:
+In unserem Fall kommt noch ein weiterer Schritt hinzu, in dem wir das aktuelle Netz kopieren und als \mintinline{python}{best_net} speichern, wenn der moving average einen neuen Höchstwert erreicht. Dieses Netz wird dann am Ende des Trainings zurückgegeben. Dies soll sicherstellen, dass zum Schluss das beste Trainingsergebnis ausgegeben wird, auch wenn der Agent im Laufe der Zeit wieder etwas verlernt hat. Wir ergänzen also:
 \begin{enumerate}
     \item[4.] \textit{(Fortsetzung)} 
     \begin{enumerate}
@@ -263,8 +262,8 @@ In unserem Fall kommt noch ein weiterer Schritt hinzu, in dem wir das aktuelle N
     \end{enumerate}
 \end{enumerate}
 
-\subsection{Implementierung in Python} \label{sec:deepQImplementation} [TODO evtl Code auslagern in Anhang?]
-Wir wollen nun einen DQN-Agenten in Python implementieren. PyTorch ist eine beliebtes Deep-Learning-Framework, welches Benutzerfreundlichkeit und Leistung vereint \cite{x01_pytorch}. Als Grundlage verwenden wir das Codebeispiel unter \url{https://github.com/philtabor/Youtube-Code-Repository/blob/master/ReinforcementLearning/DeepQLearning/torch_deep_q_model.py} (Zugriff am 30.03.2021), welches für unsere Zwecke stark modifiziert wird [TODO Code-Quelle hier nötig?]. Das Zentrum des Geschehens ist wieder die \mintinline{python}{train()}-Methode. Der besseren Übersicht wegen sind hier einige weniger relevante Codeausschnitte heraus gekürzt (gekennzeichnet mit ...). Außerdem wurde die Einrückung auf Methodenebene entfernt. Die Schritte sind entsprechend der Liste aus \ref{sec:deepQPrinciple} nummeriert:
+\subsection{Implementierung in Python} \label{sec:deepQImplementation}
+Wir wollen nun einen DQN-Agenten in Python implementieren. PyTorch ist eine beliebtes Deep-Learning-Framework, welches Benutzerfreundlichkeit und Leistung vereint \cite{x01_pytorch}. Als Grundlage verwenden wir das Codebeispiel von \url{https://github.com/philtabor/Youtube-Code-Repository/blob/master/ReinforcementLearning/DeepQLearning/torch_deep_q_model.py} (Zugriff am 30.03.2021), welches für unsere Zwecke stark modifiziert wird. Das Zentrum des Geschehens ist wieder die \mintinline{python}{train()}-Methode. Der besseren Übersicht wegen sind hier einige weniger relevante Codeausschnitte heraus gekürzt (gekennzeichnet mit ...). Außerdem haben wir die Einrückung auf Methodenebene entfernt. Die Schritte sind entsprechend der Liste aus Kapitel \ref{sec:deepQPrinciple} nummeriert:
 \begin{minted}[texcomments]{python}
 def train(width: int, length: int, params, environment, ... ):
 agent = Agent( ... ) # 1. bis 3.
@@ -304,7 +303,7 @@ params.rewards_all_episodes = scores
 params.max_reward_average = max_average
 return agent.best_net, params
 \end{minted}
-Die Schritte 1. bis 3. passieren bei der Initialisierung des Agenten und sind relativ unspektakulär. Interessanter ist die \mintinline{python}{learn()}-Methode des Agenten, die in jedem Zeitschritt einmal aufgerufen wird und die Schritte v. bis ix. abdeckt. Wir werfen daher einen blick auf deren Code. Auch hier wurde aus Platzgründen die Einrückung auf der Ebene der Methode entfernt:
+Die Schritte 1. bis 3. passieren bei der Initialisierung des Agenten und sind relativ unspektakulär. Interessanter ist die \mintinline{python}{learn()}-Methode des Agenten, die in jedem Zeitschritt einmal aufgerufen wird und die Schritte v. bis ix. abdeckt. Wir werfen daher einen Blick auf deren Code. Auch hier haben wir aus Platzgründen die Einrückung auf der Ebene der Methode entfernt:
 \begin{minted}{python}
 def learn(self, episode):
 if self.memory_counter < self.batch_size:
@@ -367,7 +366,7 @@ class DeepQNetwork(BasicNetwork):
 \end{minted}
 Wir verwenden in unserem DQN zwei sogenannte Fully-connected hidden Layers. Das bedeutet, dass alle Neuronen einer Schicht mit allen Neuronen der nächsten Schicht verknüpft sind. PyTorch nutzt hierfür die Bezeichnung \mintinline{python}{Linear} layer. Die erste Ebene nimmt Eingaben mit den Dimensionen \mintinline{python}{input_dims} entgegen. Wir legen die Dimensionen der beiden hidden Layers für die folgenden Experimente auf \mintinline{python}{fc1_dims = 256} und \mintinline{python}{fc2_dims = 256} fest. Die Anzahl an Outputs der Ausgabeebene entspricht der Anzahl der Aktionen, die dem Agenten zur Verfügung stehen. In unserem Fall sind das \mintinline{python}{n_actions = 4}, also die vier möglichen Bewegungsrichtungen oben, rechts, unten und links.
 
-Die ReLU activation function wird im Moment als die mit der besten Performance angesehen \cite{10_stevens2020deep}. Trotzdem benutzen wir für unsere activation function Sigmoid, das diese in unserem Anwendungsfall bessere Ergebnisse zu erziehlen scheint (TODO belegen). 
+Die ReLU-activation-function wird im Moment als die mit der besten Performance angesehen \cite{10_stevens2020deep}. Trotzdem benutzen wir für unsere activation function Sigmoid, da diese in unserem Anwendungsfall bessere Ergebnisse zu erzielen scheint. 
 
 Die Hyperparameter werden in der Datenklasse \mintinline{python}{DeepQParameters} verwaltet. Diese enthält die gleichen Parameter wie \mintinline{python}{Parameters} aus Kapitel \ref{sec:qLearningHyperparameter}, wird aber noch um folgende ergänzt:
 \begin{minted}{python}

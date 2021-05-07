@@ -1,5 +1,5 @@
 \section{Deep-Q-Learning Experimente}
-Wir wollen die Implementierung aus \ref{sec:deepQImplementation} nun für einige Experimente mit Deep-Q-Agenten nutzen. Ziel ist es zunächst, eine geeignete Aufgabe für den Agenten zu finden, welche anschließend für den Vergleich unterschiedlicher Lernstrategien dienen soll.
+Wir wollen die Implementierung aus Kapitel \ref{sec:deepQImplementation} nun für einige Experimente mit Deep-Q-Agenten nutzen. Ziel ist es zunächst, eine geeignete Aufgabe für den Agenten zu finden, welche anschließend für den Vergleich unterschiedlicher Lernstrategien dienen soll.
 
 \subsection{Erste Experimente} \label{sec:deepQFirstExperiments}
 \paragraph{Ausgangsexperiment}
@@ -35,21 +35,22 @@ Damit einzelne Beobachtungen nicht zu einer völligen Veränderung der Gewichte 
     \end{subfigure}
     \caption{Ergebnisse des ersten Experiments mit DQN}
 \end{figure}
-Der Agent scheint mit diesen Informationen noch nicht viel anfangen zu können. Der Graph \ref{img:graphDeepQSimple} zeigt, dass der moving average Wert (orange) über die komplette Trainingszeit sehr inkonsistent ist. Außerdem liegt er größtenteils deutlich unter dem möglichen Höchstwert. Dies lässt sich daran erkennen, dass die blaue Linie -- also die Belohnung der einzelnen Episoden -- teilweise fast bis 400 geht, der moving average diesen aber nur wenige Male fast erreicht. Außerdem wissen wir aus Kapitel \ref{sec:qLearningExperiments}, dass definitiv ein Wert von 497 möglich ist. In Abbildung \ref{img:pathDeepQSimple} ist zu erkennen, welchen Pfad der Agent unter Verwendung des aus dem Training resultierenden Netzes zurücklegt. Er bewegt sich auf einen Gipfel, welcher sich in der Nähe des Startzustands befindet. Optimal wäre jedoch der Gipfel ganz oben in der Mitte.
+
+Der Agent scheint mit diesen Informationen noch nicht viel anfangen zu können. Der Graph in Abbildung \ref{img:graphDeepQSimple} zeigt, dass der moving average Wert (orange) über die komplette Trainingszeit sehr inkonsistent ist. Außerdem liegt er größtenteils deutlich unter dem möglichen Höchstwert. Dies lässt sich daran erkennen, dass die blaue Linie -- also die Belohnung der einzelnen Episoden -- teilweise fast bis 400 geht, der moving average diesen aber nur wenige Male fast erreicht. Außerdem wissen wir aus Kapitel \ref{sec:qLearningExperiments}, dass definitiv ein Wert von 497 möglich ist. In Abbildung \ref{img:pathDeepQSimple} ist zu erkennen, welchen Pfad der Agent unter Verwendung des aus dem Training resultierenden Netzes zurücklegt. Er bewegt sich auf einen Gipfel, welcher sich in der Nähe des Startzustands befindet. Optimal wäre jedoch der Gipfel ganz oben in der Mitte.
 
 Das DQN liefert hier also kein sonderlich gutes Ergebnis. Dies könnte daran liegen, dass der Agent keinerlei Information über die Höhe seiner Zustände hat, von denen seine erhaltene Belohnung und die Erfüllung der Aufgabe ja stark abhängt.
 
 \paragraph{Anpassung der Parameter}
 Wir passen also die Werte an, die einen Zustand beschreiben und fügen die Höhe des aktuellen Zustands, sowie die der umliegenden Zustände hinzu. Das DQN erhält also nun als Eingabe sieben Werte (x- und y-Koordinate, eigene Höhe und die Höhe der vier umliegenden Felder).
 
-Das letzte Training hat für die 10000 Episoden auf einer Nvidia RTX 2060 [TODO evtl. unnötig zu erwähnen?] etwas über eineinhalb Stunden gedauert. Wir suchen eine Aufgabe, die für den Vergleich unterschiedlicher Lernstrategien genutzt werden soll und wollen für jede Strategie eine Experimentreihe durchlaufen, um eine statistische Auswertung zu ermöglichen. Diese sollten in zumutbarer Zeit durchführbar sein. Daher ist es wichtig, die Trainingszeit für einzelne Experimente zu reduzieren. 
+Das letzte Training hat für die 10000 Episoden etwas über eineinhalb Stunden gedauert\footnote{Die Experimente wurden auf einer Nvidia RTX 2060 durchgeführt}. Wir suchen eine Aufgabe, die für den Vergleich unterschiedlicher Lernstrategien genutzt werden soll und wollen für jede Strategie eine Experimentreihe durchlaufen, um eine statistische Auswertung zu ermöglichen. Diese sollten in zumutbarer Zeit durchführbar sein. Daher ist es wichtig, die Trainingszeit für einzelne Experimente zu reduzieren. 
 
 Wir reduzieren daher die Episodenanzahl \mintinline{python}{num_episodes} auf 1500. Dementsprechend muss auch die \mintinline{python}{exploration_decay_rate} angepasst werden. Wir setzen diese auf 0.005.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_height_in_state.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphDeepQHeightInState}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
@@ -59,7 +60,7 @@ Wir reduzieren daher die Episodenanzahl \mintinline{python}{num_episodes} auf 15
     \end{subfigure}
     \caption{Ergebnisse mit angepassten Parametern}
 \end{figure}
-In Abbildung \ref{img:pathDeepQHeightInState} lässt sich schnell erkennen, dass das Trainingsergebnis auch hier nicht zufriedenstellend ist. Der Agent bewegt sich nur ein paar Felder weit zu einem nahe gelegenen, sehr kleinen Hügel. Der moving average in Graph \ref{img:graphDeepQHeightInState} zeigt auch keinen gewünschten Trainingsverlauf wie beispielsweise in Graph \ref{img:graphQBest}. Lediglich die Trainingsdauer hat sich wie erwartet verringert.
+In Abbildung \ref{img:pathDeepQHeightInState} lässt sich schnell erkennen, dass das Trainingsergebnis auch hier nicht zufriedenstellend ist. Der Agent bewegt sich nur ein paar Felder weit zu einem nahe gelegenen, sehr kleinen Hügel. Der moving average in Abbildung \ref{img:graphDeepQHeightInState} zeigt auch keinen gewünschten Trainingsverlauf wie beispielsweise in Abbildung \ref{img:graphQBest}. Lediglich die Trainingsdauer hat sich wie erwartet verringert.
 
 \paragraph{Zufällige Startposition}
 Wir werden daher unseren Ansatz etwas verändern. Die Startposition wird zu Beginn jeder Episode zufällig gewählt. Das DQN erhält außerdem statt der absoluten Position im Grid die relative Position zum Startpunkt. Das bedeutet, dass dieser immer die Koordinaten (0, 0) besitzt. Dies soll die Abhängigkeit von einem immer gleichen Startzustand aufbrechen und die Aufgabe interessanter machen.
@@ -67,7 +68,7 @@ Wir werden daher unseren Ansatz etwas verändern. Die Startposition wird zu Begi
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_random_spawn.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphDeepQRandomSpawn}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
@@ -77,7 +78,7 @@ Wir werden daher unseren Ansatz etwas verändern. Die Startposition wird zu Begi
     \end{subfigure}
     \caption{Ergebnisse mit zufälliger Startposition}
 \end{figure}
-Der Agent läuft nun von seiner Startposition aus so lange in die Richtung eines höheren Punktes, bis es nicht mehr weiter nach oben geht. Einer dieser möglichen Pfade ist in Abbildung \ref{img:graphDeepQRandomSpawn} zu sehen. Das ist schon mal ein Schritt in die richtige Richtung. Die Aufgabe ist allerdings zu einfach. Im Graph \ref{img:graphDeepQRandomSpawn} lässt sich erkennen, dass der Großteil des Lernvorgangs bereits vor der 100-Epsioden-Marke passiert. Dies ist nicht optimal für unsere Zwecke, da wir erst ab Episode 100 den moving average und damit unsere Hauptvergleichsquelle verfolgen können.
+Der Agent läuft nun von seiner Startposition aus so lange in die Richtung eines höheren Punktes, bis es nicht mehr weiter nach oben geht. Einer dieser möglichen Pfade ist in Abbildung \ref{img:graphDeepQRandomSpawn} zu sehen. Das ist schon mal ein Schritt in die richtige Richtung. Die Aufgabe ist allerdings zu einfach. Im Graph in Abbildung \ref{img:graphDeepQRandomSpawn} lässt sich erkennen, dass der Großteil des Lernvorgangs bereits vor der 100-Epsioden-Marke passiert. Dies ist nicht optimal für unsere Zwecke, da wir erst ab Episode 100 den moving average und damit unsere Hauptvergleichsquelle verfolgen können.
 
 Das neue Ziel soll daher sein, dass der Agent nicht nur nach oben läuft, sondern einen möglichst hohen Punkt in der Nähe des Startpunktes findet. Zu diesem Zweck erweitern wir die Eingaben, die das DQN bekommt. Wir übergeben nun die Höhe und die relative Position des in diesem Zeitschritt bisher höchsten besuchten Feldes. Außerdem wird die Anzahl der übrigen und der maximalen Zeitschritte angefügt. Dies soll in der Theorie dazu führen, dass der Agent seine Umgebung erkundet, solange noch genügend Zeit ist. Gegen Ende der Episode sollte er dann zum bisher höchsten bekannten Gipfel laufen.
 
@@ -85,7 +86,7 @@ Das neue Ziel soll daher sein, dass der Agent nicht nur nach oben läuft, sonder
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_random_spawn_2.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphDeepQRandomSpawn2}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
@@ -96,7 +97,7 @@ Das neue Ziel soll daher sein, dass der Agent nicht nur nach oben läuft, sonder
     \caption{Ergebnisse mit zusätzlichen Inputs}
 \end{figure}
 
-Das Ergebnis ist ähnlich wie das des vorangegangenen Experiments. Zum besseren Vergleich haben wir für die Darstellung in Abbildung \ref{img:pathDeepQRandomSpawn2} denselben Startpunkt gewählt wie in Abbildung \ref{img:pathDeepQRandomSpawn}. Der Agent orientiert sich tatsächlich hin zum etwas höheren Gipfel und scheint in einem sehr kleinen Umkreis die Umgebung zu erkunden, versäumt es aber am Ende auf dem höchsten Punkt aufzuhören. Dies kann  daran liegen, dass sich der Agent in jedem Zeitschritt bewegen muss und auf diese Weise nicht die Möglichkeit besitzt, genau auf dem höchsten Feld aufzuhören. Die Farbcodierung der Landschaft verrät uns allerdings, dass das Feld links oder unterhalb des vorletzten Schritts höher gelegen ist als das gewählte obere Feld. Viel wichtiger ist jedoch, dass der Graph \ref{img:graphDeepQRandomSpawn2} keinen wirklichen Trainingsfortschritt zeigt. Der moving average pendelt hier grob um denselben Wert und zeigt keinerlei Verbesserung des Agenten über längere Zeit. Auch dieser Ansatz ist also für unsere Zwecke nicht geeignet.
+Das Ergebnis ist ähnlich wie das des vorangegangenen Experiments. Zum besseren Vergleich haben wir für die Darstellung in Abbildung \ref{img:pathDeepQRandomSpawn2} denselben Startpunkt gewählt wie in Abbildung \ref{img:pathDeepQRandomSpawn}. Der Agent orientiert sich tatsächlich hin zum etwas höheren Gipfel und scheint in einem sehr kleinen Umkreis die Umgebung zu erkunden, versäumt es aber am Ende auf dem höchsten Punkt aufzuhören. Dies kann  daran liegen, dass sich der Agent in jedem Zeitschritt bewegen muss und auf diese Weise nicht die Möglichkeit besitzt, genau auf dem höchsten Feld aufzuhören. Die Farbcodierung der Landschaft verrät uns allerdings, dass das Feld links oder unterhalb des vorletzten Schritts höher gelegen ist als das gewählte obere Feld. Viel wichtiger ist jedoch, dass der Graph in Abbildung \ref{img:graphDeepQRandomSpawn2} keinen wirklichen Trainingsfortschritt zeigt. Der moving average pendelt hier grob um denselben Wert und zeigt keinerlei Verbesserung des Agenten über längere Zeit. Auch dieser Ansatz ist also für unsere Zwecke nicht geeignet.
 
 \paragraph{Neudefinition des Lernziels}
 Aufgrund der Misserfolge mit dem Finden von hohen Gipfeln wollen wir nun versuchen, ein anderes Ziel zu erarbeiten. Die neue Idee ist, dass der Agent so viele Felder wie möglich besuchen soll, sich dabei aber so wenig wie möglich vom Startfeld entfernt. Wir erhoffen uns hiervon, dass die quasi gegensätzlichen Ziele zu interessanten Ergebnissen führen und für ein DQN ein angemessenes Problem darstellen.
@@ -114,14 +115,14 @@ Als nächstes passen wir die Werte an, die einen Zustand beschreiben. Nicht mehr
     \includegraphics[width=0.3\textwidth]{state_visualisation.pdf}
     \caption{Visualisierung der Inputs des Agenten abhängig von den angrenzenden Positionen im Raster} \label{img:stateVisualisation}
 \end{figure}
-Abbildung \ref{img:stateVisualisation} zeigt ein Beispiel, wie die entsprechenden Werte ohne Multiplikator aussehen können. Das Raster stellt einen kleinen Ausschnitt des Landschaft-Grids dar. Die grünen Felder hat der Agent bereits besucht. Das DQN erhält für das obere, bereits gesehene Feld also den Wert 0. Die beiden unerforschten Positionen rechts und unten liefern jeweils einen positiven Wert - in diesem Fall ohne einen Multiplikator also den Wert 1. Da die Position links des Agenten außerhalb des Grids liegt, ist diese mit dem Wert -1 belegt.
+Abbildung \ref{img:stateVisualisation} zeigt ein Beispiel, wie die entsprechenden Werte ohne Multiplikator aussehen können. Das Raster stellt einen kleinen Ausschnitt des Landschaft-Grids dar. Die grünen Felder hat der Agent bereits besucht. Das DQN erhält für das obere, bereits gesehene Feld also den Wert 0. Die beiden unerforschten Positionen rechts und unten liefern jeweils einen positiven Wert -- in diesem Fall ohne einen Multiplikator also den Wert 1. Da die Position links des Agenten außerhalb des Grids liegt, ist diese mit dem Wert -1 belegt.
 
 Die Werte bezüglich den Zeitschritten aus dem vorherigen Experiment sind ebenfalls enthalten. Insgesamt besteht ein Zustand jetzt also aus 8 Werten: Die relative Position (2), die Information über die anliegenden Positionen (4) und die Werte der übrigen beziehungsweise maximalen Zeitschritte (2).
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.59\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_random_spawn_spiral_1.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphDeepQRandomSpawnSpiral1}
     \end{subfigure}
     \begin{subfigure}[b]{0.4\textwidth}
@@ -131,13 +132,13 @@ Die Werte bezüglich den Zeitschritten aus dem vorherigen Experiment sind ebenfa
     \end{subfigure}
     \caption{Ergebnisse nach Neudefinition des Lernziels}
 \end{figure}
-Der Graph \ref{img:graphDeepQRandomSpawnSpiral1} zeigt wieder die Trainingsergebnisse der 1500 Episoden an. Am moving average lässt sich diemal ein sauberer Lernfortschritt erkennen. Die durchschnittliche Belohnung steigt bis circa Episode 400 stark an und flacht dann langsam ab. Dieser Verlauf ist zunächst zufriedenstellend. Weniger zufriedenstellend ist allerdings das Verhalten, welches der Agent unter Verwendung des erlernten DQNs zeigt. Wie in Abbildung \ref{img:pathDeepQRandomSpawnSpiral1} zu sehen ist, bewegt sich der Agent von seiner Startposition aus lediglich ein Feld in jede Richtung und springt dann nur noch hin und her.
+Der Graph in Abbildung \ref{img:graphDeepQRandomSpawnSpiral1} zeigt wieder die Trainingsergebnisse der 1500 Episoden an. Am moving average lässt sich diemal ein sauberer Lernfortschritt erkennen. Die durchschnittliche Belohnung steigt bis circa Episode 400 stark an und flacht dann langsam ab. Dieser Verlauf ist zunächst zufriedenstellend. Weniger zufriedenstellend ist allerdings das Verhalten, welches der Agent unter Verwendung des erlernten DQNs zeigt. Wie in Abbildung \ref{img:pathDeepQRandomSpawnSpiral1} zu sehen ist, bewegt sich der Agent von seiner Startposition aus lediglich ein Feld in jede Richtung und springt dann nur noch hin und her.
 An dieser Stelle kommen unsere Belohnungsparameter ins Spiel. Da es dem Agenten aktuell wichtiger zu sein scheint, sich so wenig wie möglich vom Startpunkt zu entfernen, setzen wir den \mintinline{python}{NEW_POINT_REWARD} auf 10.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.59\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_random_spawn_spiral_2.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphDeepQRandomSpawnSpiral2}
     \end{subfigure}
     \begin{subfigure}[b]{0.4\textwidth}
@@ -149,7 +150,7 @@ An dieser Stelle kommen unsere Belohnungsparameter ins Spiel. Da es dem Agenten 
 \end{figure}
 Dies hat einen sehr positiven Einfluss auf das Ergebnis. Abbildung \ref{img:pathDeepQRandomSpawnSpiral2} stellt wieder einen Pfad des Agenten nach dem Training dar. Die Startposition liegt hier etwa in der Mitte der abgelaufenen Fläche und der Agent läuft quasi spiralförmig immer weiter von diesem Punkt weg. Für das Lösen der Aufgabe ist das eine sehr gute Strategie, da viele neue Felder besucht werden und die Distanz zum Startpunkt gleichzeitig so gering wie möglich gehalten wird.
 
-Der Graph \ref{img:graphDeepQRandomSpawnSpiral2} zeigt wie im Experiment davor eine schöne Lernkurve, welche zu Beginn des Trainings stark ansteigt und dann langsam abflacht. Aufgrund der höheren Belohnung für neu besuchte Felder verläuft der moving average nun im positiven Bereich.
+Der Graph in Abbildung \ref{img:graphDeepQRandomSpawnSpiral2} zeigt wie im Experiment davor eine schöne Lernkurve, welche zu Beginn des Trainings stark ansteigt und dann langsam abflacht. Aufgrund der höheren Belohnung für neu besuchte Felder verläuft der moving average nun im positiven Bereich.
 
 Aufgrund dieser positiven Resultate mit dem Experiment werden wir diese Aufgabe für die Durchführung der weiteren Experimente nutzen und die Performance der unterschiedlichen Strategien vergleichen.
 % Besser sind 2000 Episoden -> Test mit 10 Iterationen aus den Versuchen extrahieren
@@ -163,35 +164,35 @@ Aufgrund dieser positiven Resultate mit dem Experiment werden wir diese Aufgabe 
 % 
 
 \subsection{Experimente mit unterschiedlichen Strategien}
-Im Graph \ref{img:graphDeepQRandomSpawnSpiral2} erkennt man, dass sich der moving average gegen Ende kaum noch verändert. Er steigt allerdings bis kurz davor noch minimal an, weswegen wir die Episodenlänge -- also die Zeitschritte pro Episode -- auf 2000 erhöhen. So soll sich auch bei langsameren Lernkurven der moving average am Ende bei einem Wert eingependelt haben. Es ist außerdem wichtig zu erwähnen, dass für die zufällige Wahl der Startposition für alle Experimentreihen der gleiche Seed benutzt wird. Die zufälligen Spawnpunkte und deren Reihenfolge sind also für alle Experimente gleich und somit besitzen alle die gleichen Voraussetzungen.
+In Abbildung \ref{img:graphDeepQRandomSpawnSpiral2} erkennt man, dass sich der moving average gegen Ende kaum noch verändert. Er steigt allerdings bis kurz davor noch minimal an, weswegen wir die Episodenlänge -- also die Zeitschritte pro Episode -- auf 2000 erhöhen. So soll sich auch bei langsameren Lernkurven der moving average am Ende bei einem Wert eingependelt haben. Es ist außerdem wichtig zu erwähnen, dass für die zufällige Wahl der Startposition für alle Experimentreihen der gleiche Seed benutzt wird. Die zufälligen Spawnpunkte und deren Reihenfolge sind also für alle Experimente gleich und somit besitzen alle die gleichen Voraussetzungen.
 
 \paragraph{Experimentreihe mit den erarbeiteten Parametern}
-Wir führen zunächst eine Experimentreihe mit den in Kapitel \ref{sec:deepQFirstExperiments} erarbeiteten Parametern durch. Das Experiment wird wie in \ref{sec:qLearningExperiments} 20 Mal wiederholt. Bei den folgenden Graphen handelt es sich -- falls nicht anders angegeben -- immer um den durchschnittlichen moving average Wert und dessen Standardabweichung, welche als leicht transparenten Bereich um die Linie dargestellt wird.
+Wir führen zunächst eine Experimentreihe mit den in Kapitel \ref{sec:deepQFirstExperiments} erarbeiteten Parametern durch. Das Experiment wird wie in Kapitel \ref{sec:qLearningExperiments} 20 Mal wiederholt. Bei den folgenden Graphen handelt es sich -- falls nicht anders angegeben -- immer um den durchschnittlichen moving average Wert und dessen Standardabweichung, welche als leicht transparenten Bereich um die Linie dargestellt wird.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\textwidth]{deep_q_learning/figure_mean_dec_eps_1.pdf}
-    \caption{Trainingsergebnisse mit Experiment wie in \ref{img:graphDeepQRandomSpawnSpiral2} nach 20 Wiederholungen. Graph so wie in \ref{img:graphQEpsComp}.} \label{img:graphDeepQMeanDecEps1}
+    \caption{Trainingsergebnisse mit Experiment wie in Abbildung \ref{img:graphDeepQRandomSpawnSpiral2} nach 20 Wiederholungen. Graph so wie in Abbildung \ref{img:graphQEpsComp}.} \label{img:graphDeepQMeanDecEps1}
 
 \end{figure}
-Der Lernfortschritt scheint auch über mehrere Experimente hinweg sehr konsistent zu sein. Die Lernkurve verläuft im Graph \ref{img:graphDeepQMeanDecEps1} wie gewünscht anfangs steil und flacht gegen Ende ab. Die Standardabweichung ist zu jedem Zeitpunkt sehr gering, die Ergebnisse der Einzelexperimente unterscheiden sich also nicht stark voneinander. 
+Der Lernfortschritt scheint auch über mehrere Experimente hinweg sehr konsistent zu sein. Die Lernkurve verläuft im Graph in Abbildung \ref{img:graphDeepQMeanDecEps1} wie gewünscht anfangs steil und flacht gegen Ende ab. Die Standardabweichung ist zu jedem Zeitpunkt sehr gering, die Ergebnisse der Einzelexperimente unterscheiden sich also nicht stark voneinander. 
 
 \paragraph{Agent ohne Erkundungsstrategie}
 Anders verhält es sich beim Training ohne Erkundungsstrategie. Wir setzen hierfür unser $ \epsilon $ konstant auf 0. Der Agent agiert also wieder nur greedy. Auch dieses Experiment wiederholen wir 20 Mal.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{deep_q_learning/figure_mean_stat_eps_0_vs_dec_eps_1.pdf}
-    \caption{Vergleich der Trainingsverläufe mit und ohne $ \epsilon $-greedy Strategie nach jeweils 20 Wiederholungen. Graph so wie in \ref{img:graphQEpsComp}.} \label{img:graphDeepQMeanStatEps0VsDecEps1}
+    \caption{Vergleich der Trainingsverläufe mit und ohne $ \epsilon $-greedy Strategie nach jeweils 20 Wiederholungen. Graph so wie in Abbildung \ref{img:graphQEpsComp}.} \label{img:graphDeepQMeanStatEps0VsDecEps1}
 \end{figure}
-Graph \ref{img:graphDeepQMeanStatEps0VsDecEps1} zeigt das Resultat dieses Experiments (orange) und nochmals zum Vergleich das Resultat aus \ref{img:graphDeepQMeanDecEps1} (blaue). Es fällt auf, dass die orange Linie wesentlich weiter unten beginnt als die blaue. Das bedeutet, dass der Agent ohne die $ \epsilon $-greedy Strategie langsamer lernt. Außerdem erreicht dieser nicht das gleiche Belohnungsmaximum. Dazu kommt, dass die Standardabweichung auffällig größer ist. Der Lernerfolg ist demnach zusätzlich weniger zuverlässig. So zeigt sich erneut, dass die Verwendung einer Erkundungsstrategie die Performance des Agenten deutlich verbessert.
+Der Graph in Abbildung \ref{img:graphDeepQMeanStatEps0VsDecEps1} zeigt das Resultat dieses Experiments (orange) und nochmals zum Vergleich das Resultat aus Abbildung \ref{img:graphDeepQMeanDecEps1} (blaue). Es fällt auf, dass die orange Linie wesentlich weiter unten beginnt als die blaue. Das bedeutet, dass der Agent ohne die $ \epsilon $-greedy Strategie langsamer lernt. Außerdem erreicht dieser nicht das gleiche Belohnungsmaximum. Dazu kommt, dass die Standardabweichung auffällig größer ist. Der Lernerfolg ist demnach zusätzlich weniger zuverlässig. So zeigt sich erneut, dass die Verwendung einer Erkundungsstrategie die Performance des Agenten deutlich verbessert.
 
 \paragraph{Konstante $ \epsilon $-Werte}
 Als zusätzlichen Vergleich führen wir zwei weitere Experimente mit konstantem $ \epsilon $ durch. Wir setzen hierfür $ \epsilon = 0.2 $ und $ \epsilon = 0.5 $.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{deep_q_learning/figure_mean_eps_comparison.pdf}
-    \caption{Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ und unterschiedlichen statischen Werten für $ \epsilon $ nach jeweils 20 Wiederholungen. Graph so wie in \ref{img:graphQEpsComp}.} \label{img:graphEpsComparison}
+    \caption{Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ und unterschiedlichen statischen Werten für $ \epsilon $ nach jeweils 20 Wiederholungen. Graph so wie in Abbildung \ref{img:graphQEpsComp}.} \label{img:graphEpsComparison}
 \end{figure}
-Im Graphen \ref{sec:graphEpsComparison} scheint ein Agent ohne Erkundungsstrategie (orange) auf den ersten Blick bessere Ergebnisse zu erzielen als die Agenten mit konstanten $ \epsilon $-Werten (grün und rot). Man darf hierbei allerdings nicht vergessen, dass diese ihr $ \epsilon $ nicht \glqq loswerden \grqq{}, sondern bis zum Ende immer mit der Wahrscheinichkeit $ \epsilon $ eine zufällige Aktion wählen. Da das willkürliche Vorgehen natürlich keine gute Strategie ist, ist im Graphen \ref{img:graphEpsComparison} auch der moving average der Experimente mit größerem, konstanten $ \epsilon $ geringer. Die tatsächliche Performance des Agenten wird quasi von dem fixen $ \epsilon $ sabotiert. Wir führen daher eine weitere Form der Datendarstellung ein: sogenannte Boxplots.
+In Abbildung \ref{img:graphEpsComparison} scheint ein Agent ohne Erkundungsstrategie (orange) auf den ersten Blick bessere Ergebnisse zu erzielen als die Agenten mit konstanten $ \epsilon $-Werten (grün und rot). Man darf hierbei allerdings nicht vergessen, dass diese ihr $ \epsilon $ nicht \glqq loswerden \grqq{}, sondern bis zum Ende immer mit der Wahrscheinichkeit $ \epsilon $ eine zufällige Aktion wählen. Da das willkürliche Vorgehen natürlich keine gute Strategie ist, ist in Abbildung \ref{img:graphEpsComparison} auch der moving average der Experimente mit größerem, konstanten $ \epsilon $ geringer. Die tatsächliche Performance des Agenten wird quasi von dem fixen $ \epsilon $ sabotiert. Wir führen daher eine weitere Form der Datendarstellung ein: sogenannte Boxplots.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.7\textwidth}
@@ -208,11 +209,11 @@ Im Graphen \ref{sec:graphEpsComparison} scheint ein Agent ohne Erkundungsstrateg
     \label{img:graphBoxEpsComparisonBoth}
 \end{figure}
 
-Die Boxplots sollen das Verhalten des Agenten unter Anwendung des erlernten DQNs beschreiben. Die y-Achse in den Plots \ref{img:graphBoxEpsComparisonBoth} zeigt wieder die Summe der Belohnungen innerhalb einer Episode an. Die x-Achse beschreibt, um welches Experiment es sich handelt, also in diesem Fall welches $ \epsilon $ benutzt wurde. Von links nach rechts sind das in diesem Fall unser dynamisches $ \epsilon $ gefolgt von den drei fixen Werten 0.0, 0.2 und 0.5. Jedes Experiment wurde bisher 20 Mal durchgeführt. Das bedeutet, dass wir für jede Experimentenreihe 20 trainierte DQNs besitzen. Der Agent durchläuft nun mehrere Iterationen, wobei er jedes dieser Netze 5 Mal in der Umgebung anwendet. Pro Experimentreihe erhalten wir also 100 Belohnungssummen, welche wir in einem Boxplot darstellen. Der Seed für die Startposition wird zu Beginn jedes Experiments zurückgesetzt, um gleiche Voraussetzungen zu gewährleisten. Der Graph \ref{img:graphBoxEpsComparison} zeigt die resultierenden Boxplots mit ihren Ausreißern. In \ref{img:graphBoxEpsComparisonBig} wurden diese für die bessere Lesbarkeit der Boxplots abgeschnitten.
+Die Boxplots sollen das Verhalten des Agenten unter Anwendung des erlernten DQNs beschreiben. Die y-Achse in den Plots in Abbildung \ref{img:graphBoxEpsComparisonBoth} zeigt wieder die Summe der Belohnungen innerhalb einer Episode an. Die x-Achse beschreibt, um welches Experiment es sich handelt, also in diesem Fall welches $ \epsilon $ benutzt wurde. Von links nach rechts sind das in diesem Fall unser dynamisches $ \epsilon $ gefolgt von den drei fixen Werten 0.0, 0.2 und 0.5. Jedes Experiment wurde bisher 20 Mal durchgeführt. Das bedeutet, dass wir für jede Experimentenreihe 20 trainierte DQNs besitzen. Der Agent durchläuft nun mehrere Iterationen, wobei er jedes dieser Netze 5 Mal in der Umgebung anwendet. Pro Experimentreihe erhalten wir also 100 Belohnungssummen, welche wir in einem Boxplot darstellen. Der Seed für die Startposition wird zu Beginn jedes Experiments zurückgesetzt, um gleiche Voraussetzungen zu gewährleisten. Der Graph in Abbildung \ref{img:graphBoxEpsComparison} zeigt die resultierenden Boxplots mit ihren Ausreißern. In Abbildung \ref{img:graphBoxEpsComparisonBig} wurden diese für die bessere Lesbarkeit der Boxplots abgeschnitten.
 
 Es lässt sich zunächst feststellen, dass der Median beim Boxplot des dynamischen $ \epsilon $ den höchsten Wert hat. Ebenso liegen aber auch die anderen Werte, also das 1. Quartil, das 3. Quartil, das Minimum und das Maximum, bei diesem Experiment am höchsten. Es lässt sich also klar sagen, dass ein über Zeit schrumpfendes Epsilon -- also die klassische $ \epsilon $-greedy Strategie -- in der Anwendung bei uns die beste Performance liefert.
 
-Bei den Experimenten mit fixem Epsilon fällt als Erstes auf, dass das Minimum mit steigendem Epsilon immer größer wird. Wir interpretierend dies so, dass die Agenten mit einem größeren Epsilon mehr von ihrer Umgebung erkundet haben und daher für mehr Anwendungsfälle eine bessere Strategie haben. Dass der Median beim Epsilon von 0.5 wieder leicht niedriger ist als bei 0.2 kann eventuell bedeuten, dass ein zu großes Epsilon dazu führt, dass die bereits erkundeten Pfade weniger stark perfektioniert werden. Die Änderung ist allerdings relativ gering. Um hier eine eindeutige Aussage zu treffen bräuchten wir mehr Daten.
+Bei den Experimenten mit fixem Epsilon fällt als Erstes auf, dass das Minimum mit steigendem Epsilon immer größer wird. Wir interpretieren dies so, dass die Agenten mit einem größeren Epsilon mehr von ihrer Umgebung erkundet haben und daher für mehr Anwendungsfälle eine bessere Strategie haben. Dass der Median beim Epsilon von 0.5 wieder leicht niedriger ist als bei 0.2 kann eventuell bedeuten, dass ein zu großes Epsilon dazu führt, dass die bereits erkundeten Pfade weniger stark perfektioniert werden. Die Änderung ist allerdings relativ gering. Um hier eine eindeutige Aussage zu treffen bräuchten wir mehr Daten.
 
 Wir haben allerdings einmal mehr gezeigt, dass sich die Erkundungsstrategie auf das Verhalten des Agenten auswirkt.
 
@@ -236,7 +237,7 @@ params = DeepQParameters(
 \end{minted}
 
 \paragraph{Modifizierter Reward mit fixem Faktor}
-In Graph \ref{img:graphEpsComparison} lässt sich erkennen, dass die Belohnungssumme in einer Episode maximal circa 400 beträgt. Da eine Episode 80 Zeitschritte enthält, bekommt der Agent pro Zeitschritt eine durchschnittliche Belohnung von ungefähr 5. Wir nutzen dieses Wissen, um eine neue Belohnungs-Funktion zu formulieren:
+In Abbildung \ref{img:graphEpsComparison} lässt sich erkennen, dass die Belohnungssumme in einer Episode maximal circa 400 beträgt. Da eine Episode 80 Zeitschritte enthält, bekommt der Agent pro Zeitschritt eine durchschnittliche Belohnung von ungefähr 5. Wir nutzen dieses Wissen, um eine neue Belohnungs-Funktion zu formulieren:
 \begin{minted}{python}
 modified_reward = (1 - exploration_rate) * reward - exploration_rate * 5
 \end{minted}
@@ -259,11 +260,11 @@ modified_reward = (1 - exploration_rate) * reward - exploration_rate * 5
         \caption{Kompletter Plot}
         \label{img:graphEps5InRew}
     \end{subfigure}
-    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 5 (grün) und modifiziertem Reward mit Faktor 5 mit \mintinline{python}{start_exploration_rate=0.5} (rot) nach jeweils 20 Wiederholungen.}
+    \caption{Graph so wie in Abbildung \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 5 (grün) und modifiziertem Reward mit Faktor 5 mit \mintinline{python}{start_exploration_rate=0.5} (rot) nach jeweils 20 Wiederholungen.}
     \label{img:graphEps5InRewBoth}
 \end{figure} 
 
-Die Graphen in Abbildung \ref{img:graphEps5InRewBoth} zeigen wieder den durchschnittlichen moving average und dessen Standardabweichung für alle Episoden. Zum Vergleich sind hier noch die Werte für das klassische Epsilon (blau) und dem fixen Epsilon 0.0 (orange) eingetragen. Der Graph \ref{img:graphEps5InRew} enthält aller Werte. Der Graph \ref{img:graphEps5InRewBig} zeigt für einen detaillierten Vergleich des ersten Trainingsviertels die ersten 600 Episoden. Um die Unterschiede nach dem ersten Trainingsviertel besser erkennen zu können, zeigt der Graph \ref{img:graphEps5InRewBig2} einen Ausschnitt der Belohnungswerte von 250 bis 400.
+Die Graphen in Abbildung \ref{img:graphEps5InRewBoth} zeigen wieder den durchschnittlichen moving average und dessen Standardabweichung für alle Episoden. Zum Vergleich sind hier noch die Werte für das klassische Epsilon (blau) und dem fixen Epsilon 0.0 (orange) eingetragen. Der Graph in Abbildung \ref{img:graphEps5InRew} enthält alle Werte. Der Graph in Abbildung \ref{img:graphEps5InRewBig} zeigt für einen detaillierten Vergleich des ersten Trainingsviertels die ersten 600 Episoden. Um die Unterschiede nach dem ersten Trainingsviertel besser erkennen zu können, zeigt der Graph in Abbildung \ref{img:graphEps5InRewBig2} einen Ausschnitt der Belohnungswerte von 250 bis 400.
 
 Die grüne und die rote Linie zeigt den Trainingsverlauf unter Anwendung oder oben beschriebenen, modifizierten Reward-Funktion, wobei letztere das Experiment mit\linebreak\mintinline{python}{start_exploration_rate=0.5} und \mintinline{python}{max_exploration_rate=0.5} beschreibt. Beide liefern im ersten Viertel des Trainings schlechtere Belohnungswerte als das Training ohne Erkundungsstrategie. Danach überholen sie dieses allerdings und liegen am Ende zwischen dem Training mit Epsilon=0 und der klassischen $ \epsilon $-greedy Strategie. Zudem scheinen die Ergebnisse zuverlässiger zu sein als bei Epsilon=0, wie man an der geringeren Standardabweichung -- vor allem gegen Ende -- erkennen kann.
 
@@ -283,11 +284,11 @@ Um zu beurteilen, wie sich der Agent nach dem Training verhält, sehen wir uns w
         \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEps5InRewBig}
     \end{subfigure}
-    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor 5 mit \mintinline{python}{start_exploration_rate=0.5}}
+    \caption{Boxplots so wie in Abbildung \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor 5 mit \mintinline{python}{start_exploration_rate=0.5}}
     \label{img:graphBoxEps5InRewBoth}
 \end{figure}
 
-Die Graphen in Abbildung \ref{img:graphBoxEps5InRewBoth} sind genauso aufgebaut wie die in Abbildung \ref{img:graphBoxEpsComparisonBoth}. Vergleichen wir nun die beiden Experimente mit der modifizierten Reward-Funktion miteinander. BF(-5) zeigt die Belohnungen mit der \mintinline{python}{start_exploration_rate=1}, BF(-5)[S. 0.5] beschreibt dementsprechend die Versuche mit \mintinline{python}{start_exploration_rate=0.5}. Bei letzterem liegt der Median etwas höher. Dies ist vermutlich wieder darauf zurückzuführen, dass die erkundeten Pfade aufgrund der niedrigen \mintinline{python}{exploration_rate} öfter durchlaufen wurden und für diese eine optimalere Strategie gefunden wurde. Allerdings ist das Minimum hier wieder niedriger. Wir denken auch hier, dass dies an der geringeren Quantität der durchlaufenen Pfade liegt und der Agent so für weniger Zustände eine Strategie entwickelt hat. Der Interquartilsabstand spieglet gewissermaßen die Standardabweichung aus Abbildung \ref{img:graphEps5InRewBoth} wieder. Der Agent mit \mintinline{python}{start_exploration_rate=1} liefert konsistentere Resultate. Sein Boxplot deckt zudem in Bezug auf Minimum und Maximum einen ähnlichen Bereich ab wie die des klassischen $ \epsilon $-greedy Agenten. Die Quartile von letzterem liegen allerdings weiterhin weiter oben, was dessen höheren moving average am Ende von Graph \ref{img:graphEps5InRewBig2} erklärt.
+Die Graphen in Abbildung \ref{img:graphBoxEps5InRewBoth} sind genauso aufgebaut wie die in Abbildung \ref{img:graphBoxEpsComparisonBoth}. Vergleichen wir nun die beiden Experimente mit der modifizierten Reward-Funktion miteinander. BF(-5) zeigt die Belohnungen mit der \mintinline{python}{start_exploration_rate=1}, BF(-5)[S. 0.5] beschreibt dementsprechend die Versuche mit \mintinline{python}{start_exploration_rate=0.5}. Bei letzterem liegt der Median etwas höher. Dies ist vermutlich wieder darauf zurückzuführen, dass die erkundeten Pfade aufgrund der niedrigen \mintinline{python}{exploration_rate} öfter durchlaufen wurden und für diese eine optimalere Strategie gefunden wurde. Allerdings ist das Minimum hier wieder niedriger. Wir denken auch hier, dass dies an der geringeren Quantität der durchlaufenen Pfade liegt und der Agent so für weniger Zustände eine Strategie entwickelt hat. Der Interquartilsabstand spiegelt gewissermaßen die Standardabweichung aus Abbildung \ref{img:graphEps5InRewBoth} wider. Der Agent mit \mintinline{python}{start_exploration_rate=1} liefert konsistentere Resultate. Sein Boxplot deckt zudem in Bezug auf Minimum und Maximum einen ähnlichen Bereich ab wie die des klassischen $ \epsilon $-greedy Agenten. Die Quartile von letzterem liegen allerdings weiterhin weiter oben, was dessen höheren moving average am Ende vom Graph in Abbildung \ref{img:graphEps5InRewBig2} erklärt.
 
 \paragraph{Modifizierter Reward mit zufälligem Faktor}
 Wir wollen nun versuchen, den Schwerpunkt noch etwas mehr auf die zufällige Erkundung der Umgebung zu setzen. Wir passen hierfür unsere Belohnungs-Funktion an:
@@ -318,7 +319,7 @@ Die \mintinline{python}{exploration_rate} wird nun nicht mehr direkt mit unserem
     \label{img:graphEpsRandVs5InRewBoth}
 \end{figure}
 
-Die Daten des neuen Experiments sind in Abbildung \ref{img:graphEpsRandVs5InRewBoth} rot eingezeichnet. Die Form der Kurve dessen ist ähnlich mit der des vorangegangenen Experiments, allerdings verläuft sie leicht höher, gut erkennbar in Graph \ref{img:graphEpsRandVs5InRewBig}. Eine weitere Ähnlichkeit ist der Belohnungswert, bei dem sich beide gegen Ende des Trainings einpendeln, wie in Graph \ref{img:graphEpsRandVs5InRewBig2} zu sehen ist. Allerdings kommt der Agent mit dem Zufallsfaktor in seiner Belohnung etwas schneller bei diesem Wert an, was als eine direkte Verbesserung zum letzten Experiment angesehen werden kann. Im Punkt der Konsistenz stimmen die Experimente augenscheinlich ebenfalls überein, da sich die Standardabweichung der beiden kaum unterscheidet.
+Die Daten des neuen Experiments sind in Abbildung \ref{img:graphEpsRandVs5InRewBoth} rot eingezeichnet. Die Form der Kurve dessen ist ähnlich mit der des vorangegangenen Experiments, allerdings verläuft sie leicht höher, gut erkennbar in Abbildung \ref{img:graphEpsRandVs5InRewBig}. Eine weitere Ähnlichkeit ist der Belohnungswert, bei dem sich beide gegen Ende des Trainings einpendeln, wie in Abbildung \ref{img:graphEpsRandVs5InRewBig2} zu sehen ist. Allerdings kommt der Agent mit dem Zufallsfaktor in seiner Belohnung etwas schneller bei diesem Wert an, was als eine direkte Verbesserung zum letzten Experiment angesehen werden kann. Im Punkt der Konsistenz stimmen die Experimente augenscheinlich ebenfalls überein, da sich die Standardabweichung der beiden kaum unterscheidet.
 
 Beide liegen dementsprechend am Ende über dem Wert des Trainings ohne Erkundungsstrategie, allerdings weiterhin unter der klassischen $ \epsilon $-greedy Strategie.
 
@@ -335,7 +336,7 @@ Betrachten wir auch für diesen Vergleich die Boxplots der Experimente.
         \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEpsRandVs5InRewBig}
     \end{subfigure}
-    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor zufällig zwischen 0 und 5}
+    \caption{Boxplots so wie in Abbildung \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 5, modifizierter Reward mit Faktor zufällig zwischen 0 und 5}
     \label{img:graphBoxEpsRandVs5InRewBoth}
 \end{figure}
 Die Graphen in Abbildung \ref{img:graphBoxEpsRandVs5InRewBoth} sind genauso aufgebaut wie in Abbildung \ref{img:graphBoxEps5InRewBoth}. Auch hier lässt sich erkennen, dass sich die Boxplots der beiden Agenten mit modifizierter Belohnungs-Funktion sehr ähneln. Lediglich der Median vom neuen Experiment (BF(zuf)) ist ein wenig höher als der des letzten Versuchs (BF(-5)). Das Resultat des neuen Experiments ist zudem schon sehr ähnlich zu dem des klassischen $ \epsilon $-greedy Agenten (Eps dynamisch). Auch hier scheint nur der Median weiter oben zu liegen. Im Vergleich zu dem des Agenten ohne Erkundungsstrategie liegt vor allem das Minimum aller anderen Experimente ein gutes Stück höher.
@@ -367,10 +368,10 @@ Wir betrachten erneut die durchschnittliche Belohnung der $ \epsilon $-greedy St
         \caption{Kompletter Plot}
         \label{img:graphEps0VsRandInRew}
     \end{subfigure}
-    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 0 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
+    \caption{Graph so wie in Abbildung \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 0 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
     \label{img:graphEps0VsRandInRewBoth}
 \end{figure}
-Abbildung \ref{img:graphEps0VsRandInRewBoth} ist hierbei wieder ebenso aufgebaut wie Abbildung \ref{img:graphEps5InRewBoth}. In Graph \ref{img:graphEps0VsRandInRewBig} fällt auf, dass die Kurve des Experiments ohne zusätzlichen Faktor (Bel.-Fkt. (0)) zu Beginn schneller steigt als die mit zufälligem Faktor und auch die ohne Erkundungsstrategie. Graph \ref{img:graphEps0VsRandInRewBig2} zeigt uns, dass sie circa ab Episode 270 sehr ähnlich zu der des Experiments mit zufälligem Faktor in der Belohnung verläuft. Es lässt sich also festhalten, dass die Strategie dieses Experiments am Anfang des Trainings etwas schneller ist als unsere bisherigen Ansätze.
+Abbildung \ref{img:graphEps0VsRandInRewBoth} ist hierbei wieder ebenso aufgebaut wie Abbildung \ref{img:graphEps5InRewBoth}. In Abbildung \ref{img:graphEps0VsRandInRewBig} fällt auf, dass die Kurve des Experiments ohne zusätzlichen Faktor (Bel.-Fkt. (0)) zu Beginn schneller steigt als die mit zufälligem Faktor und auch die ohne Erkundungsstrategie. Der Graph in Abbildung \ref{img:graphEps0VsRandInRewBig2} zeigt uns, dass sie circa ab Episode 270 sehr ähnlich zu der des Experiments mit zufälligem Faktor in der Belohnung verläuft. Es lässt sich also festhalten, dass die Strategie dieses Experiments am Anfang des Trainings etwas schneller ist als unsere bisherigen Ansätze.
 
 Sehen wir uns nun noch die Boxplots zu diesem Experiment an.
 \begin{figure}[h!]
@@ -385,9 +386,9 @@ Sehen wir uns nun noch die Boxplots zu diesem Experiment an.
         \caption{Ausschnitt ohne die unteren Ausreißer}
         \label{img:graphBoxEps0VsRandInRewBig}
     \end{subfigure}
-    \caption{Boxplots so wie in \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 0, modifizierter Reward mit Faktor zufällig zwischen 0 und 5.}
+    \caption{Boxplots so wie in Abbildung \ref{img:graphBoxEpsComparisonBoth}. Experimente von links nach rechts: $ \epsilon $ dynamisch, $ \epsilon = 0.0 $, modifizierter Reward mit Faktor 0, modifizierter Reward mit Faktor zufällig zwischen 0 und 5.}
     \label{img:graphBoxEps0VsRandInRewBoth}
 \end{figure}
-Abbildung \ref{img:graphBoxEps0VsRandInRewBoth} ist hier wieder so aufgebaut wie Abbildung \ref{img:graphBoxEps5InRewBoth}. Im Graphen \ref{img:graphBoxEps0VsRandInRewBig} sieht man, dass das neue Minimum (BF(0)) im Vergleich zum letzten Experiment (BF(zuf)) wieder etwas tiefer liegt. Allerdings ist dafür der Median größer und augenscheinlich fast auf einer Ebene mit dem des klassischen Ansatzes (Eps dynamisch). Außerdem zeigt Graph \ref{img:graphBoxEps0VsRandInRew}, dass wir mit dem neuesten Ansatz am wenigsten Ausreißer haben. Dieser Faktor ist eventuell nicht sehr wichtig, fällt aber im Vergleich zu allen anderen bisherigen Boxplots doch auf. Eventuell gleicht diese Tatsache auch zusammen mit dem größeren Median das geringere Minimum aus. Dafür spricht die Beobachtung aus Graph \ref{img:graphEps0VsRandInRewBig2}, dass sich der Verlauf sowie die Standardabweichung der beiden Experimente sehr ähneln.
+Abbildung \ref{img:graphBoxEps0VsRandInRewBoth} ist hier wieder so aufgebaut wie Abbildung \ref{img:graphBoxEps5InRewBoth}. Im Graphen in Abbildung \ref{img:graphBoxEps0VsRandInRewBig} sieht man, dass das neue Minimum (BF(0)) im Vergleich zum letzten Experiment (BF(zuf)) wieder etwas tiefer liegt. Allerdings ist dafür der Median größer und augenscheinlich fast auf einer Ebene mit dem des klassischen Ansatzes (Eps dynamisch). Außerdem zeigt der Graph in Abbildung \ref{img:graphBoxEps0VsRandInRew}, dass wir mit dem neuesten Ansatz am wenigsten Ausreißer haben. Dieser Faktor ist eventuell nicht sehr wichtig, fällt aber im Vergleich zu allen anderen bisherigen Boxplots doch auf. Eventuell gleicht diese Tatsache auch zusammen mit dem größeren Median das geringere Minimum aus. Dafür spricht die Beobachtung aus Abbildung \ref{img:graphEps0VsRandInRewBig2}, dass sich der Verlauf sowie die Standardabweichung der beiden Experimente sehr ähneln.
 
 Aufgrund dessen und vor allem aufgrund der besseren Ergebnisse zu Beginn des Trainings, welche diesmal merklich über denen des Agenten ohne Erkundungsstrategie liegen, kommen wir zu dem Schluss, dass dies für diese Domäne unser bester Ansatz für die Abbildung einer Erkundungsstrategie im Reward ist. Der Agent lernt schneller, konsistenter und besser als ohne eine Erkundungsstrategie und die Lernresultate können sich laut Boxplots sogar fast mit denen der $ \epsilon $-greedy-Strategie messen.

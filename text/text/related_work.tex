@@ -16,7 +16,7 @@ Im Gegensatz zu unserer Idee, den Reward in Bezug auf $ \epsilon $ zu modifizier
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{rw_adaptive_epsilon.JPG}
-    \caption{TODO} \label{img:rwAdaptiveEpsilon}
+    \caption{Adaptiver $ \epsilon $-greedy-Algorithmus} \label{img:rwAdaptiveEpsilon}
     \source{\cite{r13_dos2017adaptive}}
 \end{figure}
 \cite{r13_dos2017adaptive} zeigt, dass die adaptive $ \epsilon $-greedy-Methode in den durchgeführten Experimenten zu besseren Ergebnissen führt als die $ \epsilon $-greedy Methode. Man muss allerdings erwähnen, dass das $ \epsilon $ bei letzterem einen statischen Wert hat.
@@ -25,10 +25,10 @@ Eine weitere Lernmethode, die ohne einen Reward auskommt, ist das in \cite{r02_e
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.4\textwidth]{rw_curiosity.JPG}
-    \caption{TODO} \label{img:rwCuriosity}
+    \caption{Mittels DIAYN erlernte Skills in einem 2D-Environment} \label{img:rwCuriosity}
     \source{\cite{r02_eysenbach2018diversity}}
 \end{figure}
-In Abbildung \ref{img:rwCuriosity} ist das Ergebnis dieser Phase für eine simple 2D Navigation dargestellt. Der Agent startet hier in der Mitte und kann sich im Raum bewegen. Es lässt sich erkennen, dass die erlernten Fähigkeiten, welche hier als farbige Pfade dargestellt sind, aufgrund ihrer Ungleichheit einen Großteil des Zustandsraums abdecken. Wenn nun die Aufgabe in der nächsten Phase lautet, dass der Agent nach unten links gehen soll, so ist der lila Pfad ein sehr vielversprechender Kandidat. Die Tatsache, dass die erlernten Fähigkeiten im Idealfall so unterschiedlich wie möglich sind, stellt nach \cite{r02_eysenbach2018diversity} sicher, dass einige brauchbare Fähigkeiten dabei sind. Soll der Agent nun ein tatsächliches Problem in der Domäne lösen, werden die gefundenen Fähigkeiten als mögliche Aktionen genutzt. Eysenbach zeigt anhand von einigen Experimenten, dass die DIAYN-Methode zu schnelleren Lernerfolgen führt. 
+In Abbildung \ref{img:rwCuriosity} ist das Ergebnis dieser Phase für eine simple 2D Navigation dargestellt. Der Agent startet hier in der Mitte und kann sich im Raum bewegen. Es lässt sich erkennen, dass die erlernten Fähigkeiten, welche hier als farbige Pfade dargestellt sind, aufgrund ihrer Ungleichheit einen Großteil des Zustandsraums abdecken. Wenn nun die Aufgabe in der nächsten Phase lautet, dass der Agent nach unten links gehen soll, so ist der lila Pfad ein sehr vielversprechender Kandidat. Die Tatsache, dass die erlernten Fähigkeiten im Idealfall so unterschiedlich wie möglich sind, stellt nach \cite{r02_eysenbach2018diversity} sicher, dass einige brauchbare Fähigkeiten dabei sind. Soll der Agent nun ein tatsächliches Problem in der Domäne lösen, werden die gefundenen Fähigkeiten als mögliche Aktionen genutzt. \cite{r02_eysenbach2018diversity} zeigt anhand von einigen Experimenten, dass die DIAYN-Methode zu schnelleren Lernerfolgen führt. 
 
 
 % TODO maybe einleitung? Die Notwendigkeit einer Erkundungsstrategie wird allerdings bereits von \cite{06_sutton2018reinforcement} betont, einem auf dem Gebiet des Reinforcement Learning sehr oft zitiertem Werk. 
