@@ -43,7 +43,7 @@ wobei $ E_\pi $ der Erwartungswert vom Ertrag $ G_t $ nach Gleichung \ref{eq:exp
 \paragraph{Action-Value Functions}
 Ähnlich hierzu gibt die \textit{action-value function} $ q_\pi $ an, wie profitabel es für den Agenten ist, in einem gegebenen Zustand eine gewisse Aktion auszuführen, wenn der Agent der Policy $ \pi $ folgt.
 
-Der Wert einer Aktion $ a $ im Zustand $ s $ unter der Policy $ \pi $ ist also die erwartete Belohnung, wenn man im Zustand $ s $ zum Zeitschritt $ t $ die Aktion $ a $ ausführt. Wir definieren $ q_\pi(s, a) $ als
+Der Wert einer Aktion $ a $ im Zustand $ s $ unter der Policy $ \pi $ ist also die erwartete Belohnung, wenn man im Zustand $ s $ zum Zeitschritt $ t $ die Aktion $ a $ ausführt und dann Policy $ \pi $ folgt. Wir definieren $ q_\pi(s, a) $ als
 \begin{align}
     \begin{split}
     q_\pi(s,a) & \doteq E_\pi \left[G_t | S_t = s, A_t = a \right]\\
@@ -134,11 +134,10 @@ class Parameters:
 \mintinline{python}{num_episodes} gibt die Anzahl der Episoden an, die der Agent trainieren soll, \linebreak\mintinline{python}{max_steps_per_episode} die Schritte pro Episode. \mintinline{python}{learning_rate} und \mintinline{python}{discount_rate} sind selbsterklärend. Die folgenden vier Werte beziehen sich auf die $ \epsilon $-greedy Strategie. Wir wollen die Möglichkeit haben, unser $ \epsilon $ dynamisch anzupassen. Hierfür initialisieren wir die \mintinline{python}{start_exploration_rate} als unser Anfangs-$ \epsilon $, die \mintinline{python}{max_exploration_rate} als Absicherung und eventuelle Variable für die Zukunft (ist normalerweise identisch mit der \mintinline{python}{start_exploration_rate}), die \mintinline{python}{min_exploration_rate} als minimales $ \epsilon $ und die \mintinline{python}{exploration_decay_rate} als Größe die festlegt, wie schnell $ \epsilon $ schrumpfen soll. In den beiden Variablen \mintinline{python}{rewards_all_episodes} und \mintinline{python}{max_rewards_all_episodes} werden die Belohnungen des Trainings abgelegt.
 
 \paragraph{Die \mintinline{python}{train()}-Methode}
-Die \mintinline{python}{train()}-Methode ist das Herzstück des Algorithmus. Sie besitzt die folgenden Parameter:
+Die \mintinline{python}{train()}-Methode ist das Herzstück des Algorithmus:
 \begin{minted}{python}
 def train(self, width: int, length: int, params: Parameters,
-            environment, visualize=False, plot=False, plot_interval=1,
-            plot_moving_avg_period=100):
+            environment, ...):
 \end{minted}
 \mintinline{python}{width} und \mintinline{python}{length} beschreiben die Breite und die Länge des Rasters. Dies wird in Kapitel \ref{img:terrainMain} deutlich werden. Mit diesen Daten wird die Größe der Q-table bestimmt. Mit den \mintinline{python}{params} übergeben wir der Funktion die Hyperparameter. Das \mintinline{python}{environment} ist die Umgebung, in der der Agent operieren soll. Die restlichen Parameter sind optional und beziehen sich auf die Visualisierung der Ergebnisse während des Trainings.
 
@@ -179,10 +178,6 @@ In jedem Zeitschritt wenden wir für die Wahl der Aktion unsere $ \epsilon $-gre
             rewards_current_episode += reward
             if max_reward_current_episode < reward:
                 max_reward_current_episode = reward
-
-            if visualize:
-                environment.redraw_agent()
-                time.sleep(0.04)
 \end{minted}
 
 Am Ende jeder Episode aktualisieren wir die entsprechenden Einträge in der Q-table mit den Daten aus dem Buffer. Hierfür wird die Formel für die Berechnung der Q-value aus Gleichung \ref{eq:updateQValue} angewendet:
@@ -203,8 +198,6 @@ Außerdem wird das neue $ \epsilon $ berechnet. Wir verwenden hierfür eine expo
 
         params.rewards_all_episodes.append(rewards_current_episode)
         params.max_rewards_all_episodes.append(max_reward_current_episode)
-        if plot and episode % plot_interval == 0:
-            plot_progress(params.rewards_all_episodes, exploration_rate, plot_moving_avg_period)
 
     return q_table, params
 \end{minted}
@@ -219,17 +212,17 @@ Nach \cite{11_maxim2018deeprl} ist die Benutzung von Neuronalen Netzen eine der 
 Für das stabile und effiziente Trainieren eines DQNs gibt es nach \cite{11_maxim2018deeprl} einige Techniken und Tricks. Die Informationen diesbezüglich wurden -- falls nicht anders angegeben -- aus \cite{11_maxim2018deeprl} entnommen.
 
 \paragraph{$ \epsilon $-greedy}
-Die $ \epsilon $-greedy-Strategie soll das \glqq Exploration versus Exploitation\grqq{}-Dilemma lösen. Da wir uns hiermit bereits in Kapitel \ref{sec:exploration_exploitation} befasst haben, halten wir uns an dieser Stelle nicht weiter damit auf.
+Die $ \epsilon $-greedy-Strategie bezieht sich auf das \glqq Exploration versus Exploitation\grqq{}-Dilemma und soll eine gleichmäßige Erkundung der Umgebung bewirken. Da wir uns hiermit bereits in Kapitel \ref{sec:exploration_exploitation} befasst haben, halten wir uns an dieser Stelle nicht weiter damit auf.
 
 \paragraph{Replay buffer}
-Die Daten, die der Agent im Laufe des Trainings sammelt, sind nicht unabhängig voneinander. Sie liegen höchst wahrscheinlich sehr nahe beieinander, da sie meist zur selben Episode gehören. Dazu kommt, dass die Verteilung der Daten durch die aktuelle Policy, beziehungsweise bei der Verwendung von $ \epsilon $-greedy teilweise zufällig bestimmt wird. Wünschenswert wäre eine Verteilung der Trainingsdaten identisch zu Stichproben unter Verwendung der optimalen Policy, die wir erlernen wollen.
+Die Daten, die der Agent im Laufe des Trainings sammelt, sind nicht unabhängig voneinander. Sie liegen höchst wahrscheinlich sehr nahe beieinander, da sie meist zur selben Episode gehören. Dazu kommt, dass die Verteilung der Daten durch die aktuelle Policy, beziehungsweise bei der Verwendung von $ \epsilon $-greedy teilweise zufällig bestimmt wird. Wir wollen allerdings kein zufälliges Vorgehen erlernen. Wünschenswert wäre eine Verteilung der Trainingsdaten identisch zu Stichproben unter Verwendung der optimalen Policy, die wir erlernen wollen.
 
 Um dem entgegenzuwirken verwenden wir einen großen Speicher, welcher unsere vergangenen Beobachtungen enthält. Anstatt nun mit den letzten Beobachtungen zu trainieren, entnehmen wir zufällig Daten aus diesem Speicher. Diese Methode nennt man \textit{replay buffer}. In Kapitel \ref{sec:qLearningImplementation} verwenden wir ebenfalls einen solchen replay buffer.
 
 \paragraph{Target network}
 Ein ähnliches Problem stellt der Zusammenhang zwischen benachbarten Schritten dar. Die Bellman equasion aus Gleichung \ref{eq:bellman} besagt, dass wir den Wert von $ q_\pi(s, a) $ über $ q_\pi(s', a') $ berechnen können. Die Zustände $ s $ und $ s' $ sind allerdings nur einen Schritt voneinander entfernt. Sie sind also sehr ähnlich und vom Neuronalen Netz schwer zu unterscheiden. Das hat zur Folge, dass wir bei einem Update der Parameter des Netzes für die Annäherung von $ q_\pi(s, a) $ an das gewünschte Resultat indirekt auch den Wert für $ q_\pi(s', a') $ verändern können. Dies kann das Training sehr instabil machen.
 
-Deshalb verwenden wir ein so genanntes \textit{target network}. Das target network ist eine Kopie des training networks -- bei uns später auch policy network genannt --, welches lediglich alle $ N $ Schritte oder Episoden synchronisiert wird. $ N $ ist hierbei ein weiterer Hyperparameter, den wir bei später als \mintinline{python}{target_update} bezeichnen. Mit dieser Kopie besitzen wir nun fixierte Werte für $ q_\pi(s', a') $, was das Training wesentlich stabiler machen sollte.
+Deshalb verwenden wir ein so genanntes \textit{target network}. Das target network ist eine Kopie des training networks -- bei uns später auch policy network genannt --, welches lediglich alle $ N $ Schritte oder Episoden synchronisiert wird. $ N $ ist hierbei ein weiterer Hyperparameter, den wir bei später als \mintinline{python}{target_update} bezeichnen. Mit dieser Kopie besitzen wir nun fixierte Werte für $ q_\pi(s', a') $, was das Training nach \cite{11_maxim2018deeprl} wesentlich stabiler machen sollte.
 
 \paragraph{Der Trainingsablauf von DQN}
 Wir betrachten nun einen klassischen Algorithmus für DQN. \cite{11_maxim2018deeprl} entnimmt dessen Schritte den bekannten Papern \textit{Playing Atari with Deep Reinforcement Learning} \cite{13_mnih2013atari} und \textit{Human-Level Control Through Deep Reinforcement Learning} \cite{12_mnih2015humanlevel}. Sinngemäß wiedergegeben ist der Ablauf nach \cite{12_mnih2015humanlevel} wie folgt:
@@ -288,13 +281,10 @@ for episode in range(params.num_episodes): # 4.
         agent.learn(episode) # v. bis ix.)
 
         observation = observation_
-        # ... falls gewünscht Position des Agenten anzeigen
-    # ... falls gewünscht Pfad des Agenten anzeigen
     scores.append(score)
     agent.exploration_rate = params.min_exploration_rate +\
         (params.max_exploration_rate - params.min_exploration_rate) *\
         np.exp(-params.exploration_decay_rate * episode)
-    # ... falls gewünscht Trainingsfortschritt als Graph ausgeben
     current_average = get_current_average( ... )
     if max_average < current_average or episode == plot_moving_avg_period:
         max_average = current_average

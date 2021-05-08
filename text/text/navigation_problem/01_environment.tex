@@ -2,7 +2,7 @@
 
 Als Environment für die folgenden Experimente wollen wir eine Gebirgslandschaft erzeugen. Die Umgebung bildet hierbei ein Raster, worauf sich der Agent bewegen kann. Jeder Punkt auf dem Raster soll eine Höhe besitzen. Die Landschaft soll zufällig generiert werden können.
 
-Die simpelste Lösung hierfür wäre wohl, ein zweidimensionales Array mit zufälligen Zahlen zu füllen. Auf diese Weise erhält man für jede Koordinate eine zufällige Höhe. Wir wollen allerdings für die intuitive Auswertung der Experimente (zum Beispiel \glqq Hat der Agent einen Berg gefunden?\grqq) eine Landschaft erstellen, die organisch und natürlich aussieht.
+Die simpelste Lösung hierfür wäre wohl, ein zweidimensionales Array mit zufälligen Zahlen zu füllen. Auf diese Weise erhält man für jede Koordinate eine zufällige Höhe. Es ist allerdings für die Lesbarkeit des Problems essenziell, dass benachbarte Punkte einen Zusammenhang haben (zum Beispiel \glqq Bewegt sich der Agent gerade nach oben in die Richtung eines Gipfels oder nach unten in die Richtung eines Tals?\grqq). Dazu kommt, dass die Ergebnisse der Experimente intuitiv sichtbar sein sollen (zum Beispiel \glqq Hat der Agent einen Berg gefunden?\grqq). Deshalb wollen wir eine Landschaft erstellen, die organisch und natürlich aussieht.
 
 % \subsection{Perlin Noise}
 \paragraph{Perlin Noise}
@@ -13,24 +13,7 @@ Um dieses Ziel zu erreichen, verwenden wir \textit{Perlin Noise} \cite{parberry2
     \caption{Visualisierung von zweidimensionalem Perlin Noise} \label{img:perlinNoise}
     \source{\url{https://miro.medium.com/max/2400/1*vs239SecVBaB4HvLsZ8O5Q.png}}
 \end{figure}
-% TODO evtl weiter ausführen
-% Bei Initialisierung der Klasse werden zunächst $ x \cdot y $ Gradienten erstellt, wobei $ x $ und $ y $ entweder der Länge und der Breite des Rasters entsprechen, oder einem Bruchteil dessen, um gewissermaßen in das Rauschen \glqq hereinzuzoomen \grqq{}.
-% \begin{minted}{python}
-% class PerlinNoise:
-% 
-%     def __init__(self, x, y):
-%         x, y = math.ceil(x) + 1, math.ceil(y) + 1
-%         self.gradients = []
-%         for j in range(y):
-%             self.gradients.append([])
-%             for i in range(x):
-%                 a = random.uniform(0, 1)
-%                 b = math.sqrt(1 - a ** 2)
-%                 c = [-1, 1][random.randint(0, 1)]
-%                 d = [-1, 1][random.randint(0, 1)]
-%                 self.gradients[j].append([a * c, b * d])
-% \end{minted}
-Perlin Noise ist nach \cite{parberry2015modeling} ein fundamentaler Algorithmus in der prozeduralen Generierung von Terrain und somit optimal geeignet, um unsere Umgebung zu erstellen. Wir verwenden ihn um ein zweidimensionales Array mit zufälligen Werten zwischen -1 und 1 zu erzeugen, welche wir mit einer beliebigen Höhe multiplizieren können. Je nachdem, wie stark man in die Rauschfunktion \glqq hereinzoomt\grqq{}, erhält man unterschiedliche Verteilungen der Landschaft, wie man in Abbildung \ref{img:randomTerrain} erkennen kann.
+Perlin Noise ist nach \cite{parberry2015modeling} ein fundamentaler Algorithmus in der prozeduralen Generierung von Terrain und somit offenbar sehr gut geeignet, um unsere Umgebung zu erstellen. Wir verwenden ihn um ein zweidimensionales Array mit zufälligen Werten zwischen -1 und 1 zu erzeugen, welche wir mit einer beliebigen Höhe multiplizieren können. Je nachdem, wie stark man in die Rauschfunktion \glqq hereinzoomt\grqq{}, erhält man unterschiedliche Verteilungen der Landschaft, wie man in Abbildung \ref{img:randomTerrain} erkennen kann.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
@@ -52,7 +35,7 @@ Für die Visualisierung der Landschaft benutzen wir eine abgewandelte Form des C
 
 Wir besitzen nun die Möglichkeit, eine zufällige Landschaft zu generieren und diese visuell darzustellen. Um bei allen Experimenten die gleichen Voraussetzungen zu gewährleisten, generieren wir mit der eben beschriebenen Methode zufällig ein Terrain, das allen folgenden Experimenten als Environment dient. Dieses ist in Abbildung \ref{img:terrainMain} dargestellt. Der höchste Punkt befindet sich bei dieser Landschaft auf dem Berg ganz oben in der Mitte.
 
-\begin{figure}[h!]
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth, keepaspectratio=true]{terrain_main.JPG}
     \caption{Landschaft, auf der die Experimente durchgeführt werden} \label{img:terrainMain}
