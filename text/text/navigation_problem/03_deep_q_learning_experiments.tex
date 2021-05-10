@@ -1,7 +1,7 @@
 \section{Deep-Q-Learning Experimente}
-Wir wollen die Implementierung aus Kapitel \ref{sec:deepQImplementation} nun für einige Experimente mit Deep-Q-Agenten nutzen. Ziel ist es zunächst, eine geeignete Aufgabe für den Agenten zu finden, welche anschließend für den Vergleich unterschiedlicher Lernstrategien dienen soll.
+Wir wollen die Implementierung aus Kapitel \ref{sec:deepQImplementation} nun für einige Experimente mit Deep-Q-Agenten nutzen. Wir betrachten zunächst einige Experimente mit Varianten des Ziels einen hohen Gipfel zu finden und argumentieren, dass diese für unseren Vergleich nicht geeignet sind. Stattdessen formulieren wir daraufhin ein neues Ziel, bei dem der Agent möglichst viel Fläche abdecken soll, während er aber gleichzeitig nahe an seiner Startposition bleibt. Diese Aufgabe besitzt für unsere Zwecke eine passende Komplexität und bildet daher die Grundlage für die anschließenden Vergleiche unterschiedlicher Lernstrategien.
 
-\subsection{Erste Experimente} \label{sec:deepQFirstExperiments}
+\subsection{Experimente zur Eignung des Lernziels} \label{sec:deepQFirstExperiments}
 \paragraph{Ausgangsexperiment}
 Das DQN erhält als Eingabe die aktuelle Position des Agenten in Form einer x- und einer y-Koordinate. Diese beschreiben in diesem Experiment den Zustand des Agenten. Die Mitte der Landschaft hat die Koordinaten (0, 0). Dies ist ebenfalls der Startpunkt des Agenten. Als Belohnung erhält der Agent wie in Kapitel \ref{sec:qLearningExperiments} die Differenz der Höhe des Folgezustands und des aktuellen Zustands. Die Hyperparameter werden wie folgt belegt:
 \begin{minted}{python}
@@ -25,7 +25,7 @@ Damit einzelne Beobachtungen nicht zu einer völligen Veränderung der Gewichte 
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{deep_q_learning/figure_simple.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphDeepQSimple}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
@@ -115,6 +115,7 @@ Als nächstes passen wir die Werte an, die einen Zustand beschreiben. Nicht mehr
     \includegraphics[width=0.3\textwidth]{state_visualisation.pdf}
     \caption{Visualisierung der Inputs des Agenten abhängig von den angrenzenden Positionen im Raster} \label{img:stateVisualisation}
 \end{figure}
+
 Abbildung \ref{img:stateVisualisation} zeigt ein Beispiel, wie die entsprechenden Werte ohne Multiplikator aussehen können. Das Raster stellt einen kleinen Ausschnitt des Landschaft-Grids dar. Die grünen Felder hat der Agent bereits besucht. Das DQN erhält für das obere, bereits gesehene Feld also den Wert 0. Die beiden unerforschten Positionen rechts und unten liefern jeweils einen positiven Wert -- in diesem Fall ohne einen Multiplikator also den Wert 1. Da die Position links des Agenten außerhalb des Grids liegt, ist diese mit dem Wert -1 belegt.
 
 Die Werte bezüglich den Zeitschritten aus dem vorherigen Experiment sind ebenfalls enthalten. Insgesamt besteht ein Zustand jetzt also aus 8 Werten: Die relative Position (2), die Information über die anliegenden Positionen (4) und die Werte der übrigen beziehungsweise maximalen Zeitschritte (2).
@@ -174,7 +175,8 @@ Wir führen zunächst eine Experimentreihe mit den in Kapitel \ref{sec:deepQFirs
     \caption{Trainingsergebnisse mit Experiment wie in Abbildung \ref{img:graphDeepQRandomSpawnSpiral2} nach 20 Wiederholungen. Graph so wie in Abbildung \ref{img:graphQEpsComp}.} \label{img:graphDeepQMeanDecEps1}
 
 \end{figure}
-Der Lernfortschritt scheint auch über mehrere Experimente hinweg sehr konsistent zu sein. Die Lernkurve verläuft im Graph in Abbildung \ref{img:graphDeepQMeanDecEps1} wie gewünscht anfangs steil und flacht gegen Ende ab. Die Standardabweichung ist zu jedem Zeitpunkt sehr gering, die Ergebnisse der Einzelexperimente unterscheiden sich also nicht stark voneinander. 
+
+Der Lernfortschritt scheint auch über mehrere Experimente hinweg sehr konsistent zu sein. Die Lernkurve verläuft in Abbildung \ref{img:graphDeepQMeanDecEps1} wie gewünscht anfangs steil und flacht gegen Ende ab. Die Standardabweichung ist zu jedem Zeitpunkt sehr gering, die Ergebnisse der Einzelexperimente unterscheiden sich also nicht stark voneinander. 
 
 \paragraph{Agent ohne Erkundungsstrategie}
 Anders verhält es sich beim Training ohne Erkundungsstrategie. Wir setzen hierfür unser $ \epsilon $ konstant auf 0. Der Agent agiert also wieder nur greedy. Auch dieses Experiment wiederholen wir 20 Mal.
@@ -187,12 +189,13 @@ Der Graph in Abbildung \ref{img:graphDeepQMeanStatEps0VsDecEps1} zeigt das Resul
 
 \paragraph{Konstante $ \epsilon $-Werte}
 Als zusätzlichen Vergleich führen wir zwei weitere Experimente mit konstantem $ \epsilon $ durch. Wir setzen hierfür $ \epsilon = 0.2 $ und $ \epsilon = 0.5 $.
-\begin{figure}[h!]
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{deep_q_learning/figure_mean_eps_comparison.pdf}
     \caption{Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ und unterschiedlichen statischen Werten für $ \epsilon $ nach jeweils 20 Wiederholungen. Graph so wie in Abbildung \ref{img:graphQEpsComp}.} \label{img:graphEpsComparison}
 \end{figure}
-In Abbildung \ref{img:graphEpsComparison} scheint ein Agent ohne Erkundungsstrategie (orange) auf den ersten Blick bessere Ergebnisse zu erzielen als die Agenten mit konstanten $ \epsilon $-Werten (grün und rot). Man darf hierbei allerdings nicht vergessen, dass diese ihr $ \epsilon $ nicht \glqq loswerden \grqq{}, sondern bis zum Ende immer mit der Wahrscheinichkeit $ \epsilon $ eine zufällige Aktion wählen. Da das willkürliche Vorgehen natürlich keine gute Strategie ist, ist in Abbildung \ref{img:graphEpsComparison} auch der moving average der Experimente mit größerem, konstanten $ \epsilon $ geringer. Die tatsächliche Performance des Agenten wird quasi von dem fixen $ \epsilon $ sabotiert. Wir führen daher eine weitere Form der Datendarstellung ein: sogenannte Boxplots.
+
+In Abbildung \ref{img:graphEpsComparison} scheint ein Agent ohne Erkundungsstrategie (orange) auf den ersten Blick bessere Ergebnisse zu erzielen als die Agenten mit konstanten $ \epsilon $-Werten (grün und rot). Man darf hierbei allerdings nicht vergessen, dass diese ihr $ \epsilon $ nicht \glqq loswerden\grqq{}, sondern bis zum Ende immer mit der Wahrscheinichkeit $ \epsilon $ eine zufällige Aktion wählen. Da das willkürliche Vorgehen natürlich keine gute Strategie ist, ist in Abbildung \ref{img:graphEpsComparison} auch der moving average der Experimente mit größerem, konstanten $ \epsilon $ geringer. Die tatsächliche Performance des Agenten wird quasi von dem fixen $ \epsilon $ sabotiert. Wir führen daher eine weitere Form der Datendarstellung ein: sogenannte Boxplots.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.7\textwidth}
@@ -237,7 +240,7 @@ params = DeepQParameters(
 \end{minted}
 
 \paragraph{Modifizierter Reward mit fixem Faktor}
-In Abbildung \ref{img:graphEpsComparison} lässt sich erkennen, dass die Belohnungssumme in einer Episode maximal circa 400 beträgt. Da eine Episode 80 Zeitschritte enthält, bekommt der Agent pro Zeitschritt eine durchschnittliche Belohnung von ungefähr 5. Wir nutzen dieses Wissen, um eine neue Belohnungs-Funktion zu formulieren:
+In Abbildung \ref{img:graphEpsComparison} lässt sich erkennen, dass die Belohnungssumme in einer Episode maximal circa 400 beträgt. Da eine Episode 80 Zeitschritte enthält, bekommt der Agent pro Zeitschritt eine durchschnittliche Belohnung von ungefähr 5. Wir nutzen dieses Wissen, um eine neue Belohnungs-Funktion zu formulieren. Da die durchschnittliche Belohnung diesmal stärker von der maximalen \mintinline{python}{exploration_rate} abweicht, gewichten wir die \mintinline{python}{exploration_rate} mit eben diesem Durchschnitt:
 \begin{minted}{python}
 modified_reward = (1 - exploration_rate) * reward - exploration_rate * 5
 \end{minted}
@@ -315,7 +318,7 @@ Die \mintinline{python}{exploration_rate} wird nun nicht mehr direkt mit unserem
         \caption{Kompletter Plot}
         \label{img:graphEpsRandVs5InRew}
     \end{subfigure}
-    \caption{Graph so wie in \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 5 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
+    \caption{Graph so wie in Abbildung \ref{img:graphQEpsComp}. Vergleich der Trainingsverläufe mit dynamischem $ \epsilon $ (blau), statischem $ \epsilon = 0.0 $ (gelb), modifiziertem Reward mit Faktor 5 (grün) und modifiziertem Reward mit Faktor zufällig zwischen 0 und 5 (rot) nach jeweils 20 Wiederholungen.}
     \label{img:graphEpsRandVs5InRewBoth}
 \end{figure}
 
@@ -391,4 +394,4 @@ Sehen wir uns nun noch die Boxplots zu diesem Experiment an.
 \end{figure}
 Abbildung \ref{img:graphBoxEps0VsRandInRewBoth} ist hier wieder so aufgebaut wie Abbildung \ref{img:graphBoxEps5InRewBoth}. Im Graphen in Abbildung \ref{img:graphBoxEps0VsRandInRewBig} sieht man, dass das neue Minimum (BF(0)) im Vergleich zum letzten Experiment (BF(zuf)) wieder etwas tiefer liegt. Allerdings ist dafür der Median größer und augenscheinlich fast auf einer Ebene mit dem des klassischen Ansatzes (Eps dynamisch). Außerdem zeigt der Graph in Abbildung \ref{img:graphBoxEps0VsRandInRew}, dass wir mit dem neuesten Ansatz am wenigsten Ausreißer haben. Dieser Faktor ist eventuell nicht sehr wichtig, fällt aber im Vergleich zu allen anderen bisherigen Boxplots doch auf. Eventuell gleicht diese Tatsache auch zusammen mit dem größeren Median das geringere Minimum aus. Dafür spricht die Beobachtung aus Abbildung \ref{img:graphEps0VsRandInRewBig2}, dass sich der Verlauf sowie die Standardabweichung der beiden Experimente sehr ähneln.
 
-Aufgrund dessen und vor allem aufgrund der besseren Ergebnisse zu Beginn des Trainings, welche diesmal merklich über denen des Agenten ohne Erkundungsstrategie liegen, kommen wir zu dem Schluss, dass dies für diese Domäne unser bester Ansatz für die Abbildung einer Erkundungsstrategie im Reward ist. Der Agent lernt schneller, konsistenter und besser als ohne eine Erkundungsstrategie und die Lernresultate können sich laut Boxplots sogar fast mit denen der $ \epsilon $-greedy-Strategie messen.
+Aufgrund dessen und vor allem aufgrund der besseren Ergebnisse zu Beginn des Trainings, welche diesmal merklich über denen des Agenten ohne Erkundungsstrategie liegen, kommen wir zu dem Schluss, dass dies für diese Domäne der beste von den von uns getesteten Ansätzen für die Abbildung einer Erkundungsstrategie im Reward ist. Der Agent lernt schneller, konsistenter und besser als ohne eine Erkundungsstrategie und die Lernresultate können sich laut Boxplots sogar fast mit denen der $ \epsilon $-greedy-Strategie messen.

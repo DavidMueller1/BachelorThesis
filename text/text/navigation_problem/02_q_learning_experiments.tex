@@ -39,7 +39,7 @@ Lässt man den Agenten nun die im Training erzeugt Q-table verwenden, um die bes
     \caption{Trainingsergebnisse des ersten Experiments}
 \end{figure}
 
-Eine weiter interessanter Wert ist die Anzahl der mit 0 belegten Einträge in der Q-table. Diese besitzen entweder zufällig den errechneten Q-value 0 oder wurden vom Agenten nicht berechnet. Da die meisten Einträge im 14-stelligen Nachkommabereich liegen, ist ersteres relativ unwahrscheinlich und so lässt sich sagen, dass die Summe der mit 0 belegten Einträge ungefähr der Summe der nicht erkundeten Zustände entspricht. In Fall des aktuellen Experiments sind 850 der 10000 Einträge mit 0 belegt. Der Agent hat also ungefähr $ 91.5\% $ der Umgebung erkundet.
+Ein weiter interessanter Wert ist die Anzahl der mit 0 belegten Einträge in der Q-table. Diese besitzen entweder zufällig den errechneten Q-value 0 oder wurden vom Agenten nicht berechnet. Da die meisten Einträge im 14-stelligen Nachkommabereich liegen, ist ersteres relativ unwahrscheinlich und so lässt sich sagen, dass die Summe der mit 0 belegten Einträge ungefähr der Summe der nicht erkundeten Zustände entspricht. In Fall des aktuellen Experiments sind 850 der 10000 Einträge mit 0 belegt. Der Agent hat also ungefähr $ 91.5\% $ der Umgebung erkundet.
 
 Dies ist nur ein einzelnes Experiment und hat natürlich keine statistische Aussagekraft. Es diente lediglich der Demonstration und der Erklärung der Visualisierung. Wir werden im Folgenden testen, welche Auswirkung die Verwendung der $ \epsilon $-greedy Strategie auf den Lernprozess hat.
 
@@ -71,7 +71,7 @@ In Abbildung \ref{img:graphQEpsComp} ist zu erkennen, dass die maximale erreicht
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{q_learning/figure_epsilon_in_reward_2.pdf}
-        \caption{Graph so wie in \ref{img:graphQBest}}
+        \caption{Graph so wie in Abbildung \ref{img:graphQBest}}
         \label{img:graphQEpsInRew}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}

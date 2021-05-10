@@ -6,3 +6,7 @@ MDP
 Schmidhuber
 Deep-Q-Learning
 Reinforcement
+greedy-Strategie
+Rewards
+greedy
+MDPs
