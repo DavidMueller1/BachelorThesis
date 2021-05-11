@@ -10,3 +10,13 @@ greedy-Strategie
 Rewards
 greedy
 MDPs
+discounting
+discount
+Policies
+Hyperparametern
+Buffer
+DQNs
+Rewards
+Nachkommabereich
+moving
+average

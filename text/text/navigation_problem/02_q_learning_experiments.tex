@@ -18,7 +18,7 @@ params = Parameters(
         )
 \end{minted}
 
-Wir stellen die Ergebnisse in einem Graph dar. Nach einem Trainingdurchlauf erhält man die in Abbildung \ref{img:graphQBest} dargestellte Ausgabe. Die x-Achse stellt die aktuelle Episode dar, während die y-Achse die erhaltene Belohnung, bzw. für die türkise Linie das $ \epsilon $ angibt. Die blaue Linie, welche aufgrund der großen Menge an unterschiedlichen Werten kaum mehr als solche zu erkennen ist, zeigt die Summe der Rewards aus allen Zeitschritten für jede Episode an. Die orange Linie ist der Durchschnitt der letzten 100 Gesamtbelohnungen pro Episode. Dieser Wert wird auch als \textit{moving average} bezeichnet. Die Werte von Episode 0 bis 99 sind hier mit 0 belegt. Die türkise Linie zeigt das $ \epsilon $ in jeder Episode. Die Achsenbeschriftung hierfür befindet sich auf der rechten Seite des Graphen.
+Wir stellen die Ergebnisse in einem Graph dar. Nach einem Trainingsdurchlauf erhält man die in Abbildung \ref{img:graphQBest} dargestellte Ausgabe. Die x-Achse stellt die aktuelle Episode dar, während die y-Achse die erhaltene Belohnung, bzw. für die türkise Linie das $ \epsilon $ angibt. Die blaue Linie, welche aufgrund der großen Menge an unterschiedlichen Werten kaum mehr als solche zu erkennen ist, zeigt die Summe der Rewards aus allen Zeitschritten für jede Episode an. Die orange Linie ist der Durchschnitt der letzten 100 Gesamtbelohnungen pro Episode. Dieser Wert wird auch als \textit{moving average} bezeichnet. Die Werte von Episode 0 bis 99 sind hier mit 0 belegt. Die türkise Linie zeigt das $ \epsilon $ in jeder Episode. Die Achsenbeschriftung hierfür befindet sich auf der rechten Seite des Graphen.
 
 Es lässt sich an der orangen Linie gut erkennen, wie der Agent mit der Zeit immer bessere Belohnungen erhält.
 
@@ -44,7 +44,7 @@ Ein weiter interessanter Wert ist die Anzahl der mit 0 belegten Einträge in der
 Dies ist nur ein einzelnes Experiment und hat natürlich keine statistische Aussagekraft. Es diente lediglich der Demonstration und der Erklärung der Visualisierung. Wir werden im Folgenden testen, welche Auswirkung die Verwendung der $ \epsilon $-greedy Strategie auf den Lernprozess hat.
 
 \subsection{Vergleich des Trainings mit und ohne $ \epsilon $-greedy Strategie}
-Um eine aussagenkräftigere Datengrundlage zu erhalten, werden wir die folgenden Experimente jeweils 20 mal wiederholen. Diese Zahl hat sich als ein gutes Mittelmaß zwischen einer ausreichenden Menge an Daten für die Statistik und der Berechenbarkeit in zumutbarer Zeit erwiesen.
+Um eine aussagekräftigere Datengrundlage zu erhalten, werden wir die folgenden Experimente jeweils 20 Mal wiederholen. Diese Zahl hat sich als ein gutes Mittelmaß zwischen einer ausreichenden Menge an Daten für die Statistik und der Berechenbarkeit in zumutbarer Zeit erwiesen.
 
 Die erste Experimentreihe erfolgt mit den gleichen Parametern wie im vorherigen Experiment. Für die zweite Experimentreihe setzen wir lediglich $ \epsilon $ auf 0. Das kommt dem Weglassen der $ \epsilon $-greedy Strategie gleich und bedeutet, dass der Agent in jedem Fall greedy agiert und die beste Aktion wählt. Dies soll die Notwendigkeit von $ \epsilon $ für ein besseres Trainingsergebnis zeigen.
 \begin{figure}[H]

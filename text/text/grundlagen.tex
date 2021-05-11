@@ -75,7 +75,7 @@ Die optimale action-value function $ q_* $ muss die folgende Gleichung erfüllen
 \begin{align}
     q_*(s, a) = E \left[R_{t + 1} + \gamma \max_{a'} q_*(s', a') \right] \label{eq:bellman}
 \end{align}
-Diese Gleichung wird \textit{Bellman optimality equation} für $ q_* $ genannt und besagt, dass der beste erwartete Ertrag für jedes state-action Paar $ (s, a) $ zum Zeitpunkt $ t $ der Summe aus der direkten Belohnung $ R_{t + 1} $ der Aktion $ a $ und dem \textbf{maximalen} erwarteten Ertrag, der von einem der nächsten state-action Paare $ (s', a') $ erreicht werden kann entsprechen muss. Hierbei ist $ s' $ der Folgezustand $ S_{t + 1} $ und $ a' $ die Aktion $ A_{t + 1} \in A(s') $, welche den meisten Ertrag bringt.
+Diese Gleichung wird \textit{Bellman optimality equation} für $ q_* $ genannt und besagt, dass der beste erwartete Ertrag für jedes state-action Paar $ (s, a) $ zum Zeitpunkt $ t $ der Summe aus der direkten Belohnung $ R_{t + 1} $ der Aktion $ a $ und dem \textbf{maximalen} erwarteten Ertrag, der von einem der nächsten state-action Paare $ (s', a') $ erreicht werden kann, entsprechen muss. Hierbei ist $ s' $ der Folgezustand $ S_{t + 1} $ und $ a' $ die Aktion $ A_{t + 1} \in A(s') $, welche den meisten Ertrag bringt.
 
 Das folgende Kapitel beschreibt, wie die Bellman equation verwendet wird, um $ q_* $ zu finden, was uns wiederum die optimale Policy liefern soll. 
 
@@ -84,9 +84,9 @@ Das Ziel von Q-Learning ist, die optimale Policy zu finden, indem der Agent die 
 
 Der Q-Learning-Algorithmus benutzt die Bellman equation als Update-Regel, um nach und nach die Q-values für jedes state-action Paar anzunähern. Dieses Verfahren nennt man \textit{value iteration}.
 
-Bei überschaubaren Umgebungen ist es möglich, die Werte für jedes state-action Paar in einer Tabelle, der so genannten \textit{Q-table} zu speichern. Zu Beginn weiß der Agent nichts über eine Umgebung. Die Q-table ist dementsprechend leer beziehungsweise ist der Wert jedes state-action Paares 0. Der Agent operiert nun eine vorbestimmte Anzahl von \textit{Episoden} in der Umgebung und produziert im Laufe der Zeit neue Q-values, mit denen die Q-table aktualisiert wird.
+Bei überschaubaren Umgebungen ist es möglich, die Werte für jedes state-action Paar in einer Tabelle, der sogenannten \textit{Q-table} zu speichern. Zu Beginn weiß der Agent nichts über eine Umgebung. Die Q-table ist dementsprechend leer beziehungsweise ist der Wert jedes state-action Paares 0. Der Agent operiert nun eine vorbestimmte Anzahl von \textit{Episoden} in der Umgebung und produziert im Laufe der Zeit neue Q-values, mit denen die Q-table aktualisiert wird.
 
-Zu Beginn jedes Schritts wählt der Agent eine Aktion für den aktuellen Zustand aus. Intuitiv macht es Sinn, die beste bisher bekannte Aktion zu wählen, um die Belohnung zu maximieren. Dieses Vorgehen ist allerdings nicht zielführend, da der Agent am Anfang nichts über seine Umgebung weiß. Er benötigt also für die Wahl seiner Aktionen eine bessere Strategie. Auf dieses Problem gehen wir in Kapitel \ref{sec:exploration_exploitation} näher ein.
+Zu Beginn jedes Schritts wählt der Agent eine Aktion für den aktuellen Zustand aus. Intuitiv ergibt es Sinn, die beste bisher bekannte Aktion zu wählen, um die Belohnung zu maximieren. Dieses Vorgehen ist allerdings nicht zielführend, da der Agent am Anfang nichts über seine Umgebung weiß. Er benötigt also für die Wahl seiner Aktionen eine bessere Strategie. Auf dieses Problem gehen wir in Kapitel \ref{sec:exploration_exploitation} näher ein.
 
 Nehmen wir an, der Agent hat im Zustand $ s $ zum Zeitschritt $ t $ eine Aktion $ a $ ausgewählt. Nach der Bellman equation \ref{eq:bellman} ist dann die Q-value $ q(s, a) $ (der Übersicht in Gleichung \ref{eq:bellmanClean} und \ref{eq:updateQValue} wegen lassen wir die Policy $ \pi $ hier weg, gemeint ist natürlich $ q_\pi(s, a) $) die für die Aktion erhaltene Belohnung $ R_{t + 1} $ plus der maximale erwartete Ertrag eines folgenden state-action Paares, also
 \begin{align}
@@ -113,7 +113,7 @@ Dies kann realisiert werden, indem der Agent die meiste Zeit \glqq gierig\grqq{}
 Mit diesem Wissen werden wir nun einen Q-Learning-Algorithmus in Python implementieren.
 
 \paragraph{Hyperparameter} \label{sec:qLearningHyperparameter}
-In den vorherigen Kapiteln haben wir einige Variablen eingeführt, von denen uns manche als so genannte \textit{Hyperparameter} dienen werden \cite{08_ravichandiran2018hands}. Diese steuern das Verhalten des Agenten und sollten für den optimalen Lernerfolg angepasst werden. Wir verwenden hierfür eine Datenklasse, um alle Hyperparameter an zentraler Stelle verwalten zu können:
+In den vorherigen Kapiteln haben wir einige Variablen eingeführt, von denen uns manche als sogenannte \textit{Hyperparameter} dienen werden \cite{08_ravichandiran2018hands}. Diese steuern das Verhalten des Agenten und sollten für den optimalen Lernerfolg angepasst werden. Wir verwenden hierfür eine Datenklasse, um alle Hyperparameter an zentraler Stelle verwalten zu können:
 \begin{minted}{python}
 @dataclass
 class Parameters:
@@ -190,7 +190,7 @@ Am Ende jeder Episode aktualisieren wir die entsprechenden Einträge in der Q-ta
             params.discount_rate * np.max(q_table[new_state, :]))
 \end{minted}
 
-Außerdem wird das neue $ \epsilon $ berechnet. Wir verwenden hierfür eine exponentielle Funktion, damit $ \epsilon $ am Anfang start abfällt und gegen Ende langsamer. Zuletzt werden die Belohnungen in den Params gespeichert und ggf. als Graph angezeigt.
+Außerdem wird das neue $ \epsilon $ berechnet. Wir verwenden hierfür eine exponentielle Funktion, damit $ \epsilon $ am Anfang stark abfällt und gegen Ende langsamer. Zuletzt werden die Belohnungen in den Params gespeichert und ggf. als Graph angezeigt.
 \begin{minted}{python}
         exploration_rate = params.min_exploration_rate +\
         (params.max_exploration_rate - params.min_exploration_rate) *\
@@ -207,7 +207,7 @@ Außerdem wird das neue $ \epsilon $ berechnet. Wir verwenden hierfür eine expo
 \subsection{Das Prinzip von Deep-Q-Learning} \label{sec:deepQPrinciple}
 Bisher haben wir alle Q-values in einer Q-table gespeichert. Dieses Vorgehen ist relativ simpel, stößt aber nach \cite{11_maxim2018deeprl} bei großen Zustands- bzw. Aktionsräume schnell an seine Grenzen. Als Beispiel wird hier Q-Learning bei Atari-Spielen aufgeführt, bei denen die Pixel als Zustände benutzt werden. Es leuchtet ein, dass in so einem Fall aufgrund der großen Menge an state-action Paaren die Speicherung deren Q-values schwierig, wenn nicht sogar unmöglich ist.
 
-Nach \cite{11_maxim2018deeprl} ist die Benutzung von Neuronalen Netzen eine der populärsten Methoden, um mit diesem Problem umzugehen. Wir kombinieren Q-Learning mit einem Neuronalen Netz und erhalten auf diese Weise ein so genanntes \textit{Deep-Q-Network} (\textit{DQN}).
+Nach \cite{11_maxim2018deeprl} ist die Benutzung von Neuronalen Netzen eine der populärsten Methoden, um mit diesem Problem umzugehen. Wir kombinieren Q-Learning mit einem Neuronalen Netz und erhalten auf diese Weise ein sogenanntes \textit{Deep-Q-Network} (\textit{DQN}).
 
 Für das stabile und effiziente Trainieren eines DQNs gibt es nach \cite{11_maxim2018deeprl} einige Techniken und Tricks. Die Informationen diesbezüglich wurden -- falls nicht anders angegeben -- aus \cite{11_maxim2018deeprl} entnommen.
 
@@ -222,7 +222,7 @@ Um dem entgegenzuwirken verwenden wir einen großen Speicher, welcher unsere ver
 \paragraph{Target network}
 Ein ähnliches Problem stellt der Zusammenhang zwischen benachbarten Schritten dar. Die Bellman equasion aus Gleichung \ref{eq:bellman} besagt, dass wir den Wert von $ q_\pi(s, a) $ über $ q_\pi(s', a') $ berechnen können. Die Zustände $ s $ und $ s' $ sind allerdings nur einen Schritt voneinander entfernt. Sie sind also sehr ähnlich und vom Neuronalen Netz schwer zu unterscheiden. Das hat zur Folge, dass wir bei einem Update der Parameter des Netzes für die Annäherung von $ q_\pi(s, a) $ an das gewünschte Resultat indirekt auch den Wert für $ q_\pi(s', a') $ verändern können. Dies kann das Training sehr instabil machen.
 
-Deshalb verwenden wir ein so genanntes \textit{target network}. Das target network ist eine Kopie des training networks -- bei uns später auch policy network genannt --, welches lediglich alle $ N $ Schritte oder Episoden synchronisiert wird. $ N $ ist hierbei ein weiterer Hyperparameter, den wir bei später als \mintinline{python}{target_update} bezeichnen. Mit dieser Kopie besitzen wir nun fixierte Werte für $ q_\pi(s', a') $, was das Training nach \cite{11_maxim2018deeprl} wesentlich stabiler machen sollte.
+Deshalb verwenden wir ein sogenanntes \textit{target network}. Das target network ist eine Kopie des training networks -- bei uns später auch policy network genannt --, welches lediglich alle $ N $ Schritte oder Episoden synchronisiert wird. $ N $ ist hierbei ein weiterer Hyperparameter, den wir bei später als \mintinline{python}{target_update} bezeichnen. Mit dieser Kopie besitzen wir nun fixierte Werte für $ q_\pi(s', a') $, was das Training nach \cite{11_maxim2018deeprl} wesentlich stabiler machen sollte.
 
 \paragraph{Der Trainingsablauf von DQN}
 Wir betrachten nun einen klassischen Algorithmus für DQN. \cite{11_maxim2018deeprl} entnimmt dessen Schritte den bekannten Papern \textit{Playing Atari with Deep Reinforcement Learning} \cite{13_mnih2013atari} und \textit{Human-Level Control Through Deep Reinforcement Learning} \cite{12_mnih2015humanlevel}. Sinngemäß wiedergegeben ist der Ablauf nach \cite{12_mnih2015humanlevel} wie folgt:
@@ -251,7 +251,7 @@ In unserem Fall kommt noch ein weiterer Schritt hinzu, in dem wir das aktuelle N
 \begin{enumerate}
     \item[4.] \textit{(Fortsetzung)} 
     \begin{enumerate}
-        \item[c)] Bei neuer Höchstleistung des Trainings Synchronisation des Ausgabenetzes mit dem Hauptnetzes
+        \item[c)] Bei neuer Höchstleistung des Trainings Synchronisation des Ausgabenetzes mit dem Hauptnetz
     \end{enumerate}
 \end{enumerate}
 
