@@ -217,7 +217,7 @@ Die $ \epsilon $-greedy-Strategie bezieht sich auf das \glqq Exploration versus 
 \paragraph{Replay buffer}
 Die Daten, die der Agent im Laufe des Trainings sammelt, sind nicht unabhängig voneinander. Sie liegen höchst wahrscheinlich sehr nahe beieinander, da sie meist zur selben Episode gehören. Dazu kommt, dass die Verteilung der Daten durch die aktuelle Policy, beziehungsweise bei der Verwendung von $ \epsilon $-greedy teilweise zufällig bestimmt wird. Wir wollen allerdings kein zufälliges Vorgehen erlernen. Wünschenswert wäre eine Verteilung der Trainingsdaten identisch zu Stichproben unter Verwendung der optimalen Policy, die wir erlernen wollen.
 
-Um dem entgegenzuwirken verwenden wir einen großen Speicher, welcher unsere vergangenen Beobachtungen enthält. Anstatt nun mit den letzten Beobachtungen zu trainieren, entnehmen wir zufällig Daten aus diesem Speicher. Diese Methode nennt man \textit{replay buffer}. In Kapitel \ref{sec:qLearningImplementation} verwenden wir ebenfalls einen solchen replay buffer.
+Um dem entgegenzuwirken, verwenden wir einen großen Speicher, welcher unsere vergangenen Beobachtungen enthält. Anstatt nun mit den letzten Beobachtungen zu trainieren, entnehmen wir zufällig Daten aus diesem Speicher. Diese Methode nennt man \textit{replay buffer}. In Kapitel \ref{sec:qLearningImplementation} verwenden wir ebenfalls einen solchen replay buffer.
 
 \paragraph{Target network}
 Ein ähnliches Problem stellt der Zusammenhang zwischen benachbarten Schritten dar. Die Bellman equasion aus Gleichung \ref{eq:bellman} besagt, dass wir den Wert von $ q_\pi(s, a) $ über $ q_\pi(s', a') $ berechnen können. Die Zustände $ s $ und $ s' $ sind allerdings nur einen Schritt voneinander entfernt. Sie sind also sehr ähnlich und vom Neuronalen Netz schwer zu unterscheiden. Das hat zur Folge, dass wir bei einem Update der Parameter des Netzes für die Annäherung von $ q_\pi(s, a) $ an das gewünschte Resultat indirekt auch den Wert für $ q_\pi(s', a') $ verändern können. Dies kann das Training sehr instabil machen.
@@ -241,7 +241,7 @@ Wir betrachten nun einen klassischen Algorithmus für DQN. \cite{11_maxim2018dee
             \item Speichern der Beobachtung im replay memory
             \item Zufällige Auswahl einer Reihe von Beobachtungen (batch) aus dem replay memory
             \item Vorverarbeitung der Zustände
-            \item loss zwischen Q-values und Ziel-Q-values berechnen (Benutzung des target networks für den Folgezustand) % TODO loss?
+            \item loss zwischen Q-values und Ziel-Q-values berechnen (Benutzung des target networks für den Folgezustand)
             \item Aktualisieren der Gewichte im Netz, um den loss zu minimieren
             \item Alle $ N $ Episoden wird das target network mit dem Hauptnetz synchronisiert
         \end{enumerate}
@@ -256,7 +256,7 @@ In unserem Fall kommt noch ein weiterer Schritt hinzu, in dem wir das aktuelle N
 \end{enumerate}
 
 \subsection{Implementierung in Python} \label{sec:deepQImplementation}
-Wir wollen nun einen DQN-Agenten in Python implementieren. PyTorch ist ein beliebtes Deep-Learning-Framework, welches Benutzerfreundlichkeit und Leistung vereint \cite{x01_pytorch}. Als Grundlage verwenden wir das Codebeispiel von \url{https://github.com/philtabor/Youtube-Code-Repository/blob/master/ReinforcementLearning/DeepQLearning/torch_deep_q_model.py} (Zugriff am 30.03.2021), welches für unsere Zwecke stark modifiziert wird. Das Zentrum des Geschehens ist wieder die \mintinline{python}{train()}-Methode. Der besseren Übersicht wegen sind hier einige weniger relevante Codeausschnitte heraus gekürzt (gekennzeichnet mit ...). Außerdem haben wir die Einrückung auf Methodenebene entfernt. Die Schritte sind entsprechend der Liste aus Kapitel \ref{sec:deepQPrinciple} nummeriert:
+Wir wollen nun einen DQN-Agenten in Python implementieren. PyTorch ist ein beliebtes Deep-Learning-Framework, welches Benutzerfreundlichkeit und Leistung vereint \cite{x01_pytorch}. Als Grundlage verwenden wir das Codebeispiel von \url{https://github.com/philtabor/Youtube-Code-Repository/blob/master/ReinforcementLearning/DeepQLearning/simple_dqn_torch_2020.py} (Zugriff am 11.05.2021), welches für unsere Zwecke stark modifiziert wird. Das Zentrum des Geschehens ist wieder die \mintinline{python}{train()}-Methode. Der besseren Übersicht wegen sind hier einige weniger relevante Codeausschnitte heraus gekürzt (gekennzeichnet mit ...). Außerdem haben wir die Einrückung auf Methodenebene entfernt. Die Schritte sind entsprechend der Liste aus Kapitel \ref{sec:deepQPrinciple} nummeriert:
 \begin{minted}[texcomments]{python}
 def train(width: int, length: int, params, environment, ... ):
 agent = Agent( ... ) # 1. bis 3.
